@@ -1,0 +1,3 @@
+{
+  "functions": { "api/chat.js": { "includeFiles": "conocimiento_carrera.md" } }
+}
