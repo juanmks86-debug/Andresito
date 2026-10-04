@@ -2,6 +2,7 @@
   var script = document.currentScript;
   var color = script.dataset.color || "#0066ff";
   var izq = script.dataset.posicion === "izquierda";
+  var icono = script.dataset.icono || ""; // URL opcional de una imagen para el ícono de la burbuja
   var api = script.dataset.api || new URL(script.src).origin + "/api/chat";
   var historial = [], vozActiva = false;
 
@@ -51,11 +52,12 @@
   var host = document.createElement("div");
   document.body.appendChild(host);
   var root = host.attachShadow({ mode: "open" });
-  var lado = (izq ? "left" : "right") + ":20px;";
   root.innerHTML =
     "<style>:host{all:initial}*{box-sizing:border-box;font-family:system-ui,sans-serif}" +
-    ".b{position:fixed;bottom:20px;" + lado + "width:56px;height:56px;border-radius:50%;border:0;background:" + color + ";color:#fff;font-size:26px;cursor:pointer;box-shadow:0 4px 12px #0004;z-index:2147483647}" +
-    ".p{position:fixed;bottom:88px;" + lado + "width:min(360px,calc(100vw - 40px));height:min(520px,calc(100vh - 110px));background:#fff;color:#111;border-radius:14px;box-shadow:0 8px 30px #0005;display:none;flex-direction:column;overflow:hidden;z-index:2147483647}" +
+    ".b{position:fixed;left:0;top:0;width:56px;height:56px;border-radius:50%;border:0;padding:0;background:" + color + ";color:#fff;cursor:grab;box-shadow:0 4px 12px #0004;z-index:2147483647;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;transition:transform .15s}" +
+    ".b.s{transition:left .25s ease,top .25s ease,transform .15s}.b:hover{transform:scale(1.07)}.b.d{cursor:grabbing;transform:scale(1.12);box-shadow:0 8px 20px #0006}" +
+    ".b svg{width:30px;height:30px;pointer-events:none}.b img{width:100%;height:100%;border-radius:50%;object-fit:cover;pointer-events:none}" +
+    ".p{position:fixed;left:0;top:0;background:#fff;color:#111;border-radius:14px;box-shadow:0 8px 30px #0005;display:none;flex-direction:column;overflow:hidden;z-index:2147483647}" +
     ".p.o{display:flex}.h{background:" + color + ";color:#fff;padding:12px 14px;font-weight:600;display:flex;justify-content:space-between;align-items:center;font-size:14px}" +
     ".h button{background:none;border:0;color:#fff;font-size:18px;cursor:pointer}" +
     ".m{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:#f5f6f8}" +
@@ -64,7 +66,7 @@
     ".c{align-self:flex-start;display:flex;flex-wrap:wrap;gap:6px}.c button{border:1px solid " + color + ";background:#fff;color:" + color + ";border-radius:14px;padding:5px 10px;font-size:12px;cursor:pointer}" +
     ".f{display:flex;gap:6px;padding:10px;border-top:1px solid #e1e3e8;background:#fff}.f input{flex:1;padding:8px 10px;border:1px solid #ccc;border-radius:8px;font-size:14px}" +
     ".f button{border:0;border-radius:8px;padding:0 10px;background:" + color + ";color:#fff;cursor:pointer;font-size:16px}</style>" +
-    '<button class="b" aria-label="Abrir chat">💬</button><div class="p"><div class="h"><span>Consultas sobre la carrera</span><span><button id="v" title="Leer respuestas en voz alta">🔇</button><button id="x" aria-label="Cerrar">✕</button></span></div>' +
+    '<button class="b" aria-label="Abrir chat"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M12 8V5"/><circle cx="12" cy="4" r="1" fill="#fff"/><circle cx="9" cy="13" r="1.2" fill="#fff" stroke="none"/><circle cx="15" cy="13" r="1.2" fill="#fff" stroke="none"/><path d="M9.5 16.2c1.5 1 3.5 1 5 0"/><path d="M2 12v3M22 12v3"/></svg></button><div class="p"><div class="h"><span>Consultas sobre la carrera</span><span><button id="v" title="Leer respuestas en voz alta">🔇</button><button id="x" aria-label="Cerrar">✕</button></span></div>' +
     '<div class="m"></div><div class="f"><input placeholder="Escribí tu pregunta..." maxlength="300"><button id="mic" title="Hablar">🎤</button><button id="s">➤</button></div></div>';
 
   var $ = function (s) { return root.querySelector(s); };
@@ -124,7 +126,62 @@
     var u = new SpeechSynthesisUtterance(txt); u.lang = "es-AR"; speechSynthesis.speak(u);
   }
 
-  $(".b").onclick = function () { panel.classList.toggle("o"); if (panel.classList.contains("o")) input.focus(); };
+  // ---- Burbuja arrastrable (se pega al borde más cercano y recuerda su posición) ----
+  var bub = $(".b"), TAM = 56, M = 20, drag = null, arrastro = false;
+  if (icono) { var im = document.createElement("img"); im.alt = ""; im.src = icono; bub.textContent = ""; bub.appendChild(im); }
+  function limitar(n, a, b) { return Math.max(a, Math.min(b, n)); }
+  var pos = { lado: izq ? "l" : "r", y: 1 };
+  try { var g = JSON.parse(localStorage.getItem("chatbot_pos")); if (g && (g.lado === "l" || g.lado === "r") && typeof g.y === "number") pos = { lado: g.lado, y: limitar(g.y, 0, 1) }; } catch (e) {}
+  function aplicarPos() {
+    var W = window.innerWidth, H = window.innerHeight;
+    bub.style.left = (pos.lado === "l" ? M : W - TAM - M) + "px";
+    bub.style.top = limitar(M + pos.y * (H - TAM - 2 * M), 0, H - TAM) + "px";
+    posPanel();
+  }
+  function posPanel() {
+    var W = window.innerWidth, H = window.innerHeight;
+    var pw = Math.min(360, W - 20), ph = Math.min(520, H - 110);
+    var bl = parseFloat(bub.style.left), bt = parseFloat(bub.style.top);
+    var l = (bl + TAM / 2 > W / 2) ? bl + TAM - pw : bl;
+    var t = (bt - ph - 12 >= 10) ? bt - ph - 12 : bt + TAM + 12;
+    panel.style.width = pw + "px"; panel.style.height = ph + "px";
+    panel.style.left = limitar(l, 10, W - pw - 10) + "px";
+    panel.style.top = Math.max(10, Math.min(t, H - ph - 10)) + "px";
+  }
+  bub.addEventListener("pointerdown", function (e) {
+    if (e.button > 0) return;
+    drag = { x: e.clientX, y: e.clientY, l: parseFloat(bub.style.left), t: parseFloat(bub.style.top), mov: false };
+    bub.setPointerCapture(e.pointerId);
+  });
+  bub.addEventListener("pointermove", function (e) {
+    if (!drag) return;
+    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    if (!drag.mov) { if (Math.hypot(dx, dy) < 6) return; drag.mov = true; bub.classList.add("d"); bub.classList.remove("s"); }
+    bub.style.left = limitar(drag.l + dx, 0, window.innerWidth - TAM) + "px";
+    bub.style.top = limitar(drag.t + dy, 0, window.innerHeight - TAM) + "px";
+    posPanel();
+  });
+  function soltar() {
+    if (!drag) return;
+    var mov = drag.mov; drag = null; bub.classList.remove("d");
+    if (!mov) return;
+    arrastro = true; setTimeout(function () { arrastro = false; }, 0);
+    var W = window.innerWidth, H = window.innerHeight;
+    pos.lado = (parseFloat(bub.style.left) + TAM / 2 < W / 2) ? "l" : "r";
+    pos.y = limitar((parseFloat(bub.style.top) - M) / (H - TAM - 2 * M), 0, 1);
+    bub.classList.add("s"); aplicarPos();
+    try { localStorage.setItem("chatbot_pos", JSON.stringify(pos)); } catch (e) {}
+  }
+  bub.addEventListener("pointerup", soltar);
+  bub.addEventListener("pointercancel", soltar);
+  window.addEventListener("resize", aplicarPos);
+  aplicarPos();
+
+  bub.onclick = function () {
+    if (arrastro) return; // fue un arrastre, no un clic
+    panel.classList.toggle("o");
+    if (panel.classList.contains("o")) { posPanel(); input.focus(); }
+  };
   $("#x").onclick = function () { panel.classList.remove("o"); };
   $("#s").onclick = enviar;
   input.addEventListener("keydown", function (e) { if (e.key === "Enter") enviar(); });
