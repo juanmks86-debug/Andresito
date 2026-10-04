@@ -30,15 +30,20 @@
   ];
 
   function norm(s) { return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " "); }
-  function stems(s) { return norm(s).split(/\s+/).filter(function (w) { return w.length > 2; }).map(function (w) { return w.slice(0, 5); }); }
+  var VACIAS = " que hay entre como para cual cuale por una uno los las del con mas esta esto ano carre cuant ";
+  function stems(s) { return norm(s).split(/\s+/).filter(function (w) { return w.length > 2; }).map(function (w) { return w.slice(0, 5); }).filter(function (w) { return VACIAS.indexOf(" " + w + " ") < 0; }); }
   FAQ.forEach(function (f) { f.set = {}; stems(f.kw).forEach(function (w) { f.set[w] = 1; }); });
 
   function buscar(t) {
+    var nt = norm(t).replace(/\s+/g, " ").trim();
+    for (var i = 0; i < FAQ.length; i++) if (norm(FAQ[i].q).replace(/\s+/g, " ").trim() === nt) return FAQ[i];
     var qs = stems(t), mejor = null, max = 0;
     FAQ.forEach(function (f) {
       var p = qs.filter(function (w) { return f.set[w]; }).length;
       if (p > max) { max = p; mejor = f; }
     });
+    // Se acepta con 2+ coincidencias si cubren la mitad de la pregunta, o con 1 si la pregunta es muy corta
+    if (max === 0 || (max === 1 && qs.length > 2) || (max >= 2 && max / qs.length < 0.5)) return null;
     return mejor;
   }
 
