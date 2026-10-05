@@ -1,36 +1,21 @@
+/* Andresito - chatbot de la carrera. Se integra con:
+   <script src="https://TU-DOMINIO/widget.js" data-color="#0066ff" defer></script>
+   Atributos opcionales: data-nombre, data-posicion="izquierda", data-icono, data-api, data-faq. Ver README.md */
 (function () {
   var script = document.currentScript;
   var color = script.dataset.color || "#0066ff";
   var izq = script.dataset.posicion === "izquierda";
   var icono = script.dataset.icono || ""; // URL opcional de una imagen para el ícono de la burbuja
-  var api = script.dataset.api || new URL(script.src).origin + "/api/chat";
-  var historial = [], vozActiva = false, preguntadas = {}, rec = null, ocupado = false;
+  var nombre = script.dataset.nombre || "Andresito";
+  var origen = new URL(script.src).origin;
+  var api = script.dataset.api || origen + "/api/chat";
+  var faqUrl = script.dataset.faq || origen + "/faq.json";
+  var historial = [], vozActiva = false, preguntadas = {}, rec = null, ocupado = false, FAQ = [];
 
-  // ---- Preguntas y respuestas (kw = palabras clave; sd = la respuesta es "no tengo ese dato") ----
-  var FAQ = [
-    { q: "¿Qué materias hay en primer año?", kw: "primer primero 1ro", a: "Primer año: Álgebra, Análisis Matemático, Programación I, Ciencia y TIC, Base de Datos, Redes, Prácticas Profesionalizantes I y EDI I." },
-    { q: "¿Qué materias hay en segundo año?", kw: "segundo 2do", a: "Segundo año: Inglés Técnico, Ciencia de Datos, Estadística y Probabilidad, Programación II, Lógica, Introducción a la Inteligencia Artificial, Machine Learning, Prácticas Profesionalizantes II y EDI II." },
-    { q: "¿Qué materias hay en tercer año?", kw: "tercer tercero 3ro ultimo", a: "Tercer año: Gestión de Proyectos, Minería de Datos, Reconocimiento Visual, Ciberseguridad, Ética y Deontología Profesional, Analítica Web, Procesamiento del Lenguaje Natural y Prácticas Profesionalizantes III." },
-    { q: "¿Qué materias tiene la carrera?", kw: "materias asignaturas plan estudios cursan curricula contenidos", a: "Son 25 materias anuales repartidas en 3 años. Preguntame por las de primer, segundo o tercer año y te las detallo." },
-    { q: "¿Cuánto dura la carrera?", kw: "dura duracion tiempo anos largo", a: "Dura 3 años, con modalidad presencial. En total son 2912 horas cátedra (aprox. 1941 horas reloj)." },
-    { q: "¿Qué título otorga?", kw: "titulo otorga egresa recibo certificado diploma", a: "Otorga el título de Técnico/a Superior en Ciencia de Datos e Inteligencia Artificial." },
-    { q: "¿Dónde se dicta?", kw: "donde sede instituto lugar dicta perico ies", a: "Se dicta en el IES N° 6 de la ciudad de Perico, Jujuy." },
-    { q: "¿En qué horario se cursa?", kw: "horario hora cursa cursada turno noche tarde", a: "La cursada es de 18:30 a 22:40." },
-    { q: "¿Es presencial o virtual?", kw: "presencial virtual online distancia", a: "La modalidad es presencial." },
-    { q: "¿Qué requisitos de ingreso hay?", kw: "requisitos ingreso ingresar condiciones secundario medio polimodal", a: "Hay que tener título de nivel medio o polimodal. Los mayores de 25 años sin secundario terminado pueden acogerse a la Resolución 114-SE-02 de Jujuy. Se presentan documentos personales y académicos según la normativa vigente." },
-    { q: "¿Cuándo es la inscripción y cuánto cuesta?", kw: "inscripcion inscribir inscribirme fechas costo costos cuesta sale cuota arancel precio contacto telefono mail beca becas gratis gratuita", sd: 1, a: "No tengo ese dato. Consultalo en la secretaría del IES N° 6 de Perico." },
-    { q: "¿Qué hace un técnico en Ciencia de Datos e IA?", kw: "perfil egresado aprendo aprender sirve funciones tareas", a: "Explora y prepara datos, crea modelos de Machine Learning (predicción, recomendación, clustering), redes neuronales, visión por computadora, chatbots y procesamiento de lenguaje, visualiza resultados y gestiona proyectos." },
-    { q: "¿Qué salida laboral tiene?", kw: "laboral trabajo empleo trabajar salida ocupacional sueldo profesion", a: "Puede trabajar en salud, agro, marketing, finanzas, banca, telefonía y cualquier organización que analice datos, integrar equipos de informática o dirigir emprendimientos propios de pequeña o mediana escala." },
-    { q: "¿Hay mucha matemática?", kw: "matematica algebra analisis calculo estadistica probabilidad logica", a: "Sí, es la base: Álgebra y Análisis Matemático en 1° año, y Estadística y Probabilidad y Lógica en 2°." },
-    { q: "¿Qué lenguajes de programación se ven?", kw: "programacion programar lenguaje lenguajes python codigo", a: "Hay Programación I y II. En Programación I se trabaja con Python, estructuras de datos y algoritmos." },
-    { q: "¿Se ve Inteligencia Artificial y Machine Learning?", kw: "inteligencia artificial machine learning deep redes neuronales vision lenguaje", a: "Sí: Introducción a la IA y Machine Learning en 2° año; Reconocimiento Visual, Procesamiento del Lenguaje Natural y Minería de Datos en 3°." },
-    { q: "¿Qué son las prácticas profesionalizantes?", kw: "practicas profesionalizantes pasantias", a: "Son espacios de práctica en los tres años (I, II y III), que se aprueban solo por promoción. Suman 416 horas cátedra." },
-    { q: "¿Cómo se aprueban las materias?", kw: "aprueban aprobar promocion promocional examen final rendir", a: "Las materias se aprueban por promoción o con examen final; las Prácticas Profesionalizantes son solo promocionales." },
-    { q: "¿Qué son los EDI?", kw: "edi definicion institucional", a: "Los EDI (Espacios de Definición Institucional) son materias cuyos temas define cada instituto con su coordinador y docentes, según las necesidades de la región." },
-    { q: "¿Cuáles son las correlatividades?", kw: "correlativas correlatividades correlativa", sd: 1, a: "No tengo ese dato cargado. Consultalo en la secretaría del IES N° 6 de Perico." }
-  ];
+  function leer(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function escribir(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 
-  // ---- Búsqueda tolerante a errores de tipeo ----
+  // ---- Búsqueda en las FAQ (tolerante a errores de tipeo) ----
   function norm(s) { return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " "); }
   var VACIAS = " que hay entre como para cual cuale por una uno los las del con mas esta esto ano carre cuant ";
   function stem(w) { return w.slice(0, 5); }
@@ -49,8 +34,10 @@
     if (a.length < 5 || b.length < 5 || Math.abs(a.length - b.length) > 2) return false;
     return lev(a, b) <= (Math.max(a.length, b.length) >= 9 ? 2 : 1);
   }
-  FAQ.forEach(function (f, i) { f.i = i; f.pal = utiles(f.kw); });
-
+  function prepararFAQ(lista) {
+    FAQ = lista.filter(function (f) { return f && typeof f.q === "string" && typeof f.a === "string"; })
+      .map(function (f, i) { f.i = i; f.pal = utiles(f.kw || f.q); return f; });
+  }
   function buscar(t) {
     var nt = norm(t).replace(/\s+/g, " ").trim();
     for (var i = 0; i < FAQ.length; i++) if (norm(FAQ[i].q).replace(/\s+/g, " ").trim() === nt) return FAQ[i];
@@ -60,59 +47,120 @@
       if (p > max) { max = p; mejor = f; }
     });
     // Prioriza la precisión: si la coincidencia es dudosa, mejor consultar a la IA que responder otra cosa.
-    // Se acepta con 2+ coincidencias que cubran la mitad de la pregunta, o con 1 si es la única palabra útil.
     if (max === 0 || (max === 1 && qs.length > 1) || (max >= 2 && max / qs.length < 0.5)) return null;
     return mejor;
   }
-
   var AYUDA = " Preguntame por materias, duración, horarios, requisitos de ingreso o salida laboral.";
   function charla(t) {
     var n = norm(t).replace(/\s+/g, " ").trim();
     if (!n) return null;
-    if (n.replace(/\b(hola|holis|buenas|buenos|dias|tardes|noches|buen|dia|hey|que|tal|como|estas|andas|todo|bien)\b/g, "").trim() === "") return "¡Hola! Soy el asistente de la carrera." + AYUDA;
+    if (n.replace(/\b(hola|holis|buenas|buenos|dias|tardes|noches|buen|dia|hey|que|tal|como|estas|andas|todo|bien)\b/g, "").trim() === "") return "¡Hola! Soy " + nombre + ", el asistente de la carrera." + AYUDA;
     if (/^(muchas )?gracias\b|^(genial|perfecto|ok|dale|listo|excelente)$/.test(n)) return "¡De nada! Si tenés otra duda sobre la carrera, preguntame.";
     if (/^(chau|adios|hasta luego|nos vemos)\b/.test(n)) return "¡Hasta luego! Cualquier duda sobre la carrera, acá estoy.";
     return null;
   }
 
   // ---- Interfaz ----
+  var ROBOT = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M12 8V5"/><circle cx="12" cy="4" r="1" fill="#fff"/><circle cx="9" cy="13" r="1.2" fill="#fff" stroke="none"/><circle cx="15" cy="13" r="1.2" fill="#fff" stroke="none"/><path d="M9.5 16.2c1.5 1 3.5 1 5 0"/><path d="M2 12v3M22 12v3"/></svg>';
   var host = document.createElement("div");
   document.body.appendChild(host);
   var root = host.attachShadow({ mode: "open" });
   root.innerHTML =
-    "<style>:host{all:initial}*{box-sizing:border-box;font-family:system-ui,sans-serif}" +
+    "<style>:host{all:initial}*{box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}" +
     "button:focus-visible,input:focus-visible{outline:2px solid #ffb300;outline-offset:2px}" +
-    ".b{position:fixed;left:0;top:0;width:56px;height:56px;border-radius:50%;border:0;padding:0;background:" + color + ";color:#fff;cursor:grab;box-shadow:0 4px 12px #0004;z-index:2147483647;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;transition:transform .15s}" +
-    ".b.s{transition:left .25s ease,top .25s ease,transform .15s}.b:hover{transform:scale(1.07)}.b.d{cursor:grabbing;transform:scale(1.12);box-shadow:0 8px 20px #0006}.b.h{display:none}" +
+    ".b{position:fixed;left:0;top:0;width:58px;height:58px;border-radius:50%;border:0;padding:0;background:linear-gradient(145deg," + color + ",#111a 140%);background-color:" + color + ";color:#fff;cursor:grab;box-shadow:0 6px 16px #0004;z-index:2147483647;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;transition:transform .15s}" +
+    ".b.s{transition:left .25s ease,top .25s ease,transform .15s}.b:hover{transform:scale(1.07)}.b.d{cursor:grabbing;transform:scale(1.12);box-shadow:0 10px 24px #0006}.b.oc{display:none}" +
+    ".b.n::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid " + color + ";animation:ring 1.8s ease-out infinite;pointer-events:none}@keyframes ring{0%{transform:scale(.9);opacity:.8}100%{transform:scale(1.35);opacity:0}}" +
     ".b svg{width:30px;height:30px;pointer-events:none}.b img{width:100%;height:100%;border-radius:50%;object-fit:cover;pointer-events:none}" +
-    ".p{position:fixed;left:0;top:0;background:#fff;color:#111;border-radius:14px;box-shadow:0 8px 30px #0005;display:none;flex-direction:column;overflow:hidden;z-index:2147483647}" +
-    ".p.o{display:flex}.h{background:" + color + ";color:#fff;padding:12px 14px;font-weight:600;display:flex;justify-content:space-between;align-items:center;font-size:14px}" +
-    ".h button{background:none;border:0;color:#fff;font-size:18px;cursor:pointer;padding:2px 6px}" +
-    ".m{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:#f5f6f8}" +
-    ".g{max-width:85%;padding:8px 12px;border-radius:12px;font-size:14px;line-height:1.4;white-space:pre-wrap}" +
-    ".u{align-self:flex-end;background:" + color + ";color:#fff}.a{align-self:flex-start;background:#fff;border:1px solid #e1e3e8}" +
-    ".t{display:flex;gap:4px;align-items:center;padding:12px}.t i{width:6px;height:6px;border-radius:50%;background:#888;animation:z 1s infinite}.t i:nth-child(2){animation-delay:.15s}.t i:nth-child(3){animation-delay:.3s}@keyframes z{0%,80%,100%{opacity:.3}40%{opacity:1}}" +
-    ".c{align-self:flex-start;display:flex;flex-wrap:wrap;gap:6px}.c button{border:1px solid " + color + ";background:#fff;color:" + color + ";border-radius:14px;padding:5px 10px;font-size:12px;cursor:pointer}" +
+    ".tip{position:fixed;left:0;top:0;background:#fff;color:#111;border-radius:14px;box-shadow:0 6px 22px #0004;padding:10px 30px 10px 12px;font-size:13px;line-height:1.35;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .25s,transform .25s;z-index:2147483646}" +
+    ".tip.v{opacity:1;pointer-events:auto;transform:none}.tip button{position:absolute;top:2px;right:4px;border:0;background:none;color:#777;font-size:14px;cursor:pointer;padding:4px}" +
+    ".p{position:fixed;left:0;top:0;background:#fff;color:#111;border-radius:16px;box-shadow:0 10px 36px #0006;display:none;flex-direction:column;overflow:hidden;z-index:2147483647}.p.o{display:flex;animation:ent .22s ease-out}@keyframes ent{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}" +
+    ".h{background:linear-gradient(135deg," + color + ",#0007 220%);background-color:" + color + ";color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px}" +
+    ".av{width:38px;height:38px;border-radius:50%;background:#fff3;display:flex;align-items:center;justify-content:center;flex:none}.av svg{width:24px;height:24px}" +
+    ".ti{flex:1;min-width:0;display:flex;flex-direction:column}.ti b{font-size:15px;line-height:1.2}.ti small{font-size:11px;opacity:.9;display:flex;align-items:center;gap:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ti i{width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block}" +
+    ".ac{display:flex}.ac button{background:none;border:0;color:#fff;font-size:17px;cursor:pointer;padding:5px 6px;border-radius:8px}.ac button:hover{background:#fff2}#v[aria-pressed=false]{opacity:.55}" +
+    ".m{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:#f3f4f7;scroll-behavior:smooth}" +
+    ".g{max-width:85%;padding:9px 13px;border-radius:16px;font-size:14px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;animation:pop .18s ease-out}@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}" +
+    ".u{align-self:flex-end;background:" + color + ";color:#fff;border-bottom-right-radius:5px}.a{align-self:flex-start;background:#fff;border:1px solid #e1e3e8;border-bottom-left-radius:5px}.g a{color:inherit;text-decoration:underline}" +
+    ".nt{align-self:center;text-align:center;font-size:11px;line-height:1.35;color:#6b7280;max-width:92%}" +
+    ".t{display:flex;gap:4px;align-items:center;padding:13px}.t i{width:6px;height:6px;border-radius:50%;background:#888;animation:z 1s infinite}.t i:nth-child(2){animation-delay:.15s}.t i:nth-child(3){animation-delay:.3s}@keyframes z{0%,80%,100%{opacity:.3}40%{opacity:1}}" +
+    ".c{align-self:flex-start;display:flex;flex-wrap:wrap;gap:6px}.c button{border:1px solid " + color + ";background:#fff;color:" + color + ";border-radius:14px;padding:6px 11px;font-size:12px;cursor:pointer;transition:background .15s}.c button:hover{background:" + color + "18}" +
     ".st{font-size:12px;color:#444;padding:6px 12px;background:#fff;border-top:1px solid #e1e3e8}.st:empty{display:none}" +
-    ".f{display:flex;gap:6px;padding:10px;border-top:1px solid #e1e3e8;background:#fff}.f input{flex:1;min-width:0;padding:8px 10px;border:1px solid #ccc;border-radius:8px;font-size:16px}" +
-    ".f button{border:0;border-radius:8px;padding:0 12px;min-height:38px;background:" + color + ";color:#fff;cursor:pointer;font-size:16px}.f button.on{background:#d93025;animation:y 1s infinite}@keyframes y{50%{opacity:.6}}" +
-    "@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}</style>" +
-    '<button class="b" aria-label="Abrir chat de consultas" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M12 8V5"/><circle cx="12" cy="4" r="1" fill="#fff"/><circle cx="9" cy="13" r="1.2" fill="#fff" stroke="none"/><circle cx="15" cy="13" r="1.2" fill="#fff" stroke="none"/><path d="M9.5 16.2c1.5 1 3.5 1 5 0"/><path d="M2 12v3M22 12v3"/></svg></button>' +
-    '<div class="p" role="dialog" aria-label="Consultas sobre la carrera"><div class="h"><span>Consultas sobre la carrera</span><span>' +
+    ".f{display:flex;gap:6px;padding:10px;border-top:1px solid #e1e3e8;background:#fff}.f input{flex:1;min-width:0;padding:9px 12px;border:1px solid #ccc;border-radius:20px;font-size:16px;background:#fff;color:#111}" +
+    ".f button{border:0;border-radius:50%;width:40px;height:40px;background:" + color + ";color:#fff;cursor:pointer;font-size:16px}.f button.on{background:#d93025;animation:y 1s infinite}@keyframes y{50%{opacity:.6}}" +
+    "@media (prefers-color-scheme:dark){.p,.tip{background:#1c1d22;color:#eceef2}.m{background:#15161a}.a{background:#25272e;border-color:#353842;color:#eceef2}.f,.st{background:#1c1d22;border-color:#353842;color:#c9ccd3}.f input{background:#25272e;color:#eceef2;border-color:#3b3e48}.c button{background:#1c1d22;color:#9ec1ff;border-color:#9ec1ff}.nt{color:#9aa0ab}}" +
+    "@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}</style>" +
+    '<button class="b n" aria-expanded="false">' + ROBOT + '</button>' +
+    '<div class="tip" role="status"><span id="tt"></span><button id="tx" aria-label="Cerrar sugerencia">✕</button></div>' +
+    '<div class="p" role="dialog"><div class="h"><div class="av">' + ROBOT + '</div><div class="ti"><b id="nom"></b><small><i></i>Asistente de la carrera</small></div><span class="ac">' +
+    '<button id="snd" aria-label="Sonidos del chat">🔔</button>' +
+    '<button id="v" title="Leer respuestas en voz alta" aria-label="Leer respuestas en voz alta" aria-pressed="false">🗣</button>' +
     '<button id="r" title="Nueva conversación" aria-label="Nueva conversación">↺</button>' +
-    '<button id="v" title="Leer respuestas en voz alta" aria-label="Leer respuestas en voz alta" aria-pressed="false">🔇</button>' +
     '<button id="x" title="Cerrar" aria-label="Cerrar chat">✕</button></span></div>' +
     '<div class="m" role="log" aria-live="polite" aria-relevant="additions"></div><div class="st" role="status"></div>' +
     '<div class="f"><input aria-label="Escribí tu pregunta" placeholder="Escribí tu pregunta..." maxlength="300" autocomplete="off">' +
     '<button id="mic" title="Hablar" aria-label="Preguntar con la voz" aria-pressed="false">🎤</button><button id="s" aria-label="Enviar pregunta">➤</button></div></div>';
 
   var $ = function (s) { return root.querySelector(s); };
-  var panel = $(".p"), msgs = $(".m"), input = $("input"), st = $(".st"), bub = $(".b");
+  var panel = $(".p"), msgs = $(".m"), input = $("input"), st = $(".st"), bub = $(".b"), tip = $(".tip");
+  $("#nom").textContent = nombre;
+  $("#tt").textContent = "👋 ¡Hola! Soy " + nombre + ". ¿Te ayudo con la carrera?";
+  panel.setAttribute("aria-label", "Chat con " + nombre);
+  bub.setAttribute("aria-label", "Abrir chat con " + nombre);
+  if (leer("chatbot_visto")) bub.classList.remove("n");
   function estado(t) { st.textContent = t || ""; }
 
+  // ---- Sonidos (generados con Web Audio, sin archivos) ----
+  var AC = null, sonidoOn = leer("chatbot_sonido") !== "0";
+  var SONIDOS = {
+    abrir: [[523, 0, .12], [784, .09, .2]], cerrar: [[659, 0, .1], [440, .08, .18]],
+    enviar: [[660, 0, .07]], recibir: [[880, 0, .1], [1175, .08, .18]],
+    mic: [[740, 0, .08], [988, .07, .12]], micFin: [[988, 0, .08], [740, .07, .12]],
+    error: [[330, 0, .12], [247, .1, .2]], soltar: [[420, 0, .06]], reset: [[587, 0, .07], [440, .06, .12]]
+  };
+  function audio() {
+    if (!AC) { var C = window.AudioContext || window.webkitAudioContext; if (!C) return null; try { AC = new C(); } catch (e) { return null; } }
+    if (AC.state === "suspended") AC.resume();
+    return AC;
+  }
+  function sonar(nombreSonido) {
+    if (!sonidoOn || document.hidden) return;
+    var a = audio(), notas = SONIDOS[nombreSonido];
+    if (!a || !notas) return;
+    var t0 = a.currentTime;
+    notas.forEach(function (n) {
+      var o = a.createOscillator(), g = a.createGain();
+      o.type = "sine"; o.frequency.value = n[0];
+      g.gain.setValueAtTime(0.0001, t0 + n[1]);
+      g.gain.exponentialRampToValueAtTime(0.07, t0 + n[1] + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + n[2]);
+      o.connect(g); g.connect(a.destination); o.start(t0 + n[1]); o.stop(t0 + n[1] + n[2] + 0.03);
+    });
+  }
+  function pintarSonido() {
+    var b = $("#snd"); b.textContent = sonidoOn ? "🔔" : "🔕";
+    b.setAttribute("aria-pressed", sonidoOn ? "true" : "false"); b.title = sonidoOn ? "Silenciar sonidos" : "Activar sonidos";
+  }
+  pintarSonido();
+  $("#snd").onclick = function () { sonidoOn = !sonidoOn; escribir("chatbot_sonido", sonidoOn ? "1" : "0"); pintarSonido(); sonar("recibir"); };
+
+  // ---- Mensajes ----
+  var URLRE = /(https?:\/\/[^\s)]+|\b(?:[a-z0-9-]+\.)+(?:edu|gob)\.ar\b)/gi;
+  function contenido(el, txt) { // texto con enlaces seguros (sin HTML)
+    el.textContent = ""; var ult = 0, m; URLRE.lastIndex = 0;
+    while ((m = URLRE.exec(txt))) {
+      var u = m[0].replace(/[.,;:!?]+$/, "");
+      if (m.index > ult) el.appendChild(document.createTextNode(txt.slice(ult, m.index)));
+      var a = document.createElement("a"); a.href = /^https?:/i.test(u) ? u : "https://" + u;
+      a.textContent = u; a.target = "_blank"; a.rel = "noopener noreferrer"; el.appendChild(a);
+      ult = m.index + u.length; URLRE.lastIndex = ult;
+    }
+    if (ult < txt.length) el.appendChild(document.createTextNode(txt.slice(ult)));
+  }
   function agregar(txt, cls) {
     var d = document.createElement("div");
-    d.className = "g " + cls; d.textContent = txt;
+    d.className = cls === "nt" ? "nt" : "g " + cls;
+    if (cls === "a") contenido(d, txt); else d.textContent = txt;
     msgs.appendChild(d); msgs.scrollTop = msgs.scrollHeight;
     return d;
   }
@@ -135,21 +183,25 @@
     });
     msgs.appendChild(c); msgs.scrollTop = msgs.scrollHeight;
   }
-  var ORDEN = [3, 4, 7, 9, 12, 11, 5, 8, 0, 1, 2, 13, 14, 10, 15, 16, 17, 6, 18];
-  function sugerencias(n) {
-    return ORDEN.filter(function (i) { return !preguntadas[i]; }).slice(0, n || 3).map(function (i) { return FAQ[i]; });
+  function sugerencias(n) { // las FAQ con "s" se ofrecen en orden; menor número = antes
+    return FAQ.filter(function (f) { return f.s && !preguntadas[f.i]; }).sort(function (a, b) { return a.s - b.s; }).slice(0, n || 3);
   }
   function bienvenida() {
-    agregar("¡Hola! Soy el asistente de la Tecnicatura en Ciencia de Datos e IA. Las respuestas son orientativas; para trámites consultá en el IES N° 6. Las preguntas que no sé responder se guardan sin datos personales para mejorar el asistente.", "a");
-    chips([FAQ[3], FAQ[4], FAQ[7], FAQ[9]]);
+    agregar("¡Hola! Soy " + nombre + " 👋, tu chatbot de la carrera de Ciencia de Datos e Inteligencia Artificial. ¿En qué te puedo ayudar?", "a");
+    agregar("Mis respuestas son orientativas: para trámites consultá en el IES N° 6. Las preguntas que no sé responder se guardan sin datos personales para mejorar.", "nt");
+    chips(sugerencias(4));
   }
   bienvenida();
+  fetch(faqUrl, { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; }).then(function (l) {
+    prepararFAQ(Array.isArray(l) ? l : []);
+    if (!msgs.querySelector(".u")) chips(sugerencias(4)); // sigue sin preguntas: ofrece las sugeridas
+  });
 
-  function responder(el, txt, guardar) {
+  function responder(el, txt, guardarHist, sonido) {
     el.className = "g a"; el.removeAttribute("role"); el.removeAttribute("aria-label");
-    el.textContent = txt;
-    if (guardar) historial.push({ role: "assistant", content: txt });
-    hablar(txt);
+    contenido(el, txt);
+    if (guardarHist) historial.push({ role: "assistant", content: txt });
+    sonar(sonido || "recibir"); hablar(txt);
     msgs.scrollTop = msgs.scrollHeight;
   }
   function pausa(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
@@ -158,10 +210,10 @@
     var t = input.value.trim();
     if (!t || ocupado) return;
     ocupado = true;
-    input.value = ""; quitarChips(); agregar(t, "u");
+    input.value = ""; quitarChips(); agregar(t, "u"); sonar("enviar");
     try {
       var sal = charla(t);
-      if (sal) { var e0 = agregar(sal, "a"); hablar(sal); chips(sugerencias()); return; }
+      if (sal) { var e0 = agregar(sal, "a"); sonar("recibir"); hablar(sal); chips(sugerencias()); return; }
       var hit = buscar(t);
       historial.push({ role: "user", content: t });
       var el = escribiendo();
@@ -180,7 +232,7 @@
         responder(el, d.reply, true);
       } catch (e) {
         historial.pop();
-        responder(el, e && e.limite ? e.message : "No tengo ese dato. Probá con alguna de estas preguntas o consultá en la secretaría del IES N° 6 de Perico.", false);
+        responder(el, e && e.limite ? e.message : "No tengo ese dato. Probá con alguna de estas preguntas o consultá en la secretaría del IES N° 6 de Perico.", false, "error");
       }
       chips(sugerencias());
     } finally { ocupado = false; }
@@ -193,18 +245,18 @@
   }
 
   // ---- Burbuja arrastrable (se pega al borde más cercano y recuerda su posición) ----
-  var TAM = 56, M = 20, drag = null, arrastro = false;
+  var TAM = 58, M = 20, drag = null, arrastro = false;
   if (icono) { var im = document.createElement("img"); im.alt = ""; im.src = icono; bub.textContent = ""; bub.appendChild(im); }
   function limitar(n, a, b) { return Math.max(a, Math.min(b, n)); }
   function movil() { return window.innerWidth <= 520; }
   var pos = { lado: izq ? "l" : "r", y: 1 };
-  try { var g = JSON.parse(localStorage.getItem("chatbot_pos")); if (g && (g.lado === "l" || g.lado === "r") && typeof g.y === "number") pos = { lado: g.lado, y: limitar(g.y, 0, 1) }; } catch (e) {}
+  try { var g = JSON.parse(leer("chatbot_pos")); if (g && (g.lado === "l" || g.lado === "r") && typeof g.y === "number") pos = { lado: g.lado, y: limitar(g.y, 0, 1) }; } catch (e) {}
   function aplicarPos() {
     var W = window.innerWidth, H = window.innerHeight;
     bub.style.left = (pos.lado === "l" ? M : W - TAM - M) + "px";
     bub.style.top = limitar(M + pos.y * (H - TAM - 2 * M), 0, H - TAM) + "px";
-    bub.classList.toggle("h", panel.classList.contains("o") && movil());
-    posPanel();
+    bub.classList.toggle("oc", panel.classList.contains("o") && movil());
+    posPanel(); posTip();
   }
   function posPanel() {
     var W = window.innerWidth, vv = window.visualViewport;
@@ -214,7 +266,7 @@
       panel.style.width = (W - 16) + "px"; panel.style.height = (H2 - 16) + "px";
       return;
     }
-    var H = window.innerHeight, pw = Math.min(360, W - 20), ph = Math.min(520, H - 110);
+    var H = window.innerHeight, pw = Math.min(370, W - 20), ph = Math.min(540, H - 110);
     var bl = parseFloat(bub.style.left), bt = parseFloat(bub.style.top);
     var l = (bl + TAM / 2 > W / 2) ? bl + TAM - pw : bl;
     var t = (bt - ph - 12 >= 10) ? bt - ph - 12 : bt + TAM + 12;
@@ -222,6 +274,25 @@
     panel.style.left = limitar(l, 10, W - pw - 10) + "px";
     panel.style.top = Math.max(10, Math.min(t, H - ph - 10)) + "px";
   }
+  // Globito de saludo (una vez por sesión)
+  var tipTimer = null;
+  function posTip() {
+    var W = window.innerWidth, tw = Math.min(240, W - 20);
+    tip.style.width = tw + "px";
+    var bl = parseFloat(bub.style.left), bt = parseFloat(bub.style.top), th = tip.offsetHeight || 52;
+    tip.style.left = limitar((bl + TAM / 2 > W / 2) ? bl + TAM - tw : bl, 10, W - tw - 10) + "px";
+    tip.style.top = (bt - th - 10 >= 10 ? bt - th - 10 : bt + TAM + 10) + "px";
+  }
+  function ocultarTip() { tip.classList.remove("v"); clearTimeout(tipTimer); }
+  $("#tx").onclick = function (e) { e.stopPropagation(); ocultarTip(); };
+  tip.onclick = function () { ocultarTip(); abrir(); };
+  setTimeout(function () {
+    var visto = null; try { visto = sessionStorage.getItem("chatbot_tip"); } catch (e) {}
+    if (visto || panel.classList.contains("o")) return;
+    posTip(); tip.classList.add("v"); tipTimer = setTimeout(ocultarTip, 12000);
+    try { sessionStorage.setItem("chatbot_tip", "1"); } catch (e) {}
+  }, 5000);
+
   bub.addEventListener("pointerdown", function (e) {
     if (e.button > 0) return;
     drag = { x: e.clientX, y: e.clientY, l: parseFloat(bub.style.left), t: parseFloat(bub.style.top), mov: false };
@@ -230,7 +301,7 @@
   bub.addEventListener("pointermove", function (e) {
     if (!drag) return;
     var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-    if (!drag.mov) { if (Math.hypot(dx, dy) < 6) return; drag.mov = true; bub.classList.add("d"); bub.classList.remove("s"); }
+    if (!drag.mov) { if (Math.hypot(dx, dy) < 6) return; drag.mov = true; bub.classList.add("d"); bub.classList.remove("s"); ocultarTip(); }
     bub.style.left = limitar(drag.l + dx, 0, window.innerWidth - TAM) + "px";
     bub.style.top = limitar(drag.t + dy, 0, window.innerHeight - TAM) + "px";
     posPanel();
@@ -243,8 +314,8 @@
     var W = window.innerWidth, H = window.innerHeight;
     pos.lado = (parseFloat(bub.style.left) + TAM / 2 < W / 2) ? "l" : "r";
     pos.y = limitar((parseFloat(bub.style.top) - M) / (H - TAM - 2 * M), 0, 1);
-    bub.classList.add("s"); aplicarPos();
-    try { localStorage.setItem("chatbot_pos", JSON.stringify(pos)); } catch (e) {}
+    bub.classList.add("s"); aplicarPos(); sonar("soltar");
+    escribir("chatbot_pos", JSON.stringify(pos));
   }
   bub.addEventListener("pointerup", soltar);
   bub.addEventListener("pointercancel", soltar);
@@ -253,14 +324,15 @@
   aplicarPos();
 
   function abrir() {
+    ocultarTip(); bub.classList.remove("n"); escribir("chatbot_visto", "1");
     panel.classList.add("o"); bub.setAttribute("aria-expanded", "true");
-    bub.classList.toggle("h", movil()); posPanel(); input.focus();
+    bub.classList.toggle("oc", movil()); posPanel(); input.focus(); sonar("abrir");
   }
   function cerrar() {
-    panel.classList.remove("o"); bub.setAttribute("aria-expanded", "false"); bub.classList.remove("h");
+    panel.classList.remove("o"); bub.setAttribute("aria-expanded", "false"); bub.classList.remove("oc");
     if (rec) rec.abort();
     if (window.speechSynthesis) speechSynthesis.cancel();
-    bub.focus();
+    sonar("cerrar"); bub.focus();
   }
   bub.onclick = function () {
     if (arrastro) return; // fue un arrastre, no un clic
@@ -274,7 +346,7 @@
   $("#r").onclick = function () {
     historial = []; preguntadas = {}; msgs.textContent = ""; estado("");
     if (window.speechSynthesis) speechSynthesis.cancel();
-    bienvenida(); input.focus();
+    sonar("reset"); bienvenida(); input.focus();
   };
 
   // ---- Micrófono con avisos de estado ----
@@ -292,24 +364,23 @@
     if (window.speechSynthesis) speechSynthesis.cancel();
     var texto = "", fallo = false, r = new SR();
     rec = r; r.lang = "es-AR"; r.interimResults = false;
-    r.onstart = function () { micEstado(true); estado("🎤 Escuchando… hablá ahora (tocá de nuevo para parar)"); };
+    r.onstart = function () { micEstado(true); sonar("mic"); estado("🎤 Escuchando… hablá ahora (tocá de nuevo para parar)"); };
     r.onresult = function (e) { texto = e.results[0][0].transcript; };
     r.onerror = function (e) {
       if (e.error === "aborted") return;
-      fallo = true; estado(ERRORES[e.error] || "No pude usar el micrófono.");
+      fallo = true; sonar("error"); estado(ERRORES[e.error] || "No pude usar el micrófono.");
       setTimeout(function () { if (!rec) estado(""); }, 6000);
     };
     r.onend = function () {
       rec = null; micEstado(false);
-      if (!fallo) estado("");
+      if (!fallo) { estado(""); sonar("micFin"); }
       if (texto) { input.value = texto; enviar(); }
     };
     try { r.start(); } catch (e) { rec = null; micEstado(false); estado("No pude iniciar el micrófono."); }
   }; else $("#mic").style.display = "none";
 
   if (window.speechSynthesis) $("#v").onclick = function () {
-    vozActiva = !vozActiva; $("#v").textContent = vozActiva ? "🔊" : "🔇";
-    $("#v").setAttribute("aria-pressed", vozActiva ? "true" : "false");
-    if (!vozActiva) speechSynthesis.cancel();
+    vozActiva = !vozActiva; $("#v").setAttribute("aria-pressed", vozActiva ? "true" : "false");
+    if (!vozActiva) speechSynthesis.cancel(); else sonar("recibir");
   }; else $("#v").style.display = "none";
 })();
