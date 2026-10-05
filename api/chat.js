@@ -2,7 +2,8 @@
 // Variables de entorno (Vercel > Settings > Environment Variables):
 //   IA_KEY            (obligatoria) clave del proveedor de IA
 //   IA_URL            (opcional) endpoint compatible con OpenAI. Por defecto: Groq
-//   IA_MODELO         (opcional) modelo a usar. Por defecto: llama-3.1-8b-instant
+//   IA_MODELO         (opcional) uno o varios modelos separados por coma; si el primero no existe (404/400) prueba el siguiente.
+//                     Por defecto: llama-3.3-70b-versatile,openai/gpt-oss-20b,llama-3.1-8b-instant
 //   ALLOWED_ORIGINS   (opcional) dominios permitidos, separados por coma. Ej: https://ies6.edu.ar,https://www.ies6.edu.ar
 //   LIMITE_IP_HORA    (opcional) mensajes por IP por hora. Por defecto: 20
 //   LIMITE_DIA        (opcional) mensajes totales por día. Por defecto: 500
@@ -13,7 +14,7 @@ const fs = require("fs");
 const path = require("path");
 
 const IA_URL = process.env.IA_URL || "https://api.groq.com/openai/v1/chat/completions";
-const IA_MODELO = process.env.IA_MODELO || "llama-3.1-8b-instant";
+const MODELOS = (process.env.IA_MODELO || "llama-3.3-70b-versatile,openai/gpt-oss-20b,llama-3.1-8b-instant").split(",").map(function (m) { return m.trim(); }).filter(Boolean);
 const LIMITE_IP = parseInt(process.env.LIMITE_IP_HORA || "20", 10);
 const LIMITE_DIA = parseInt(process.env.LIMITE_DIA || "500", 10);
 const MAX_MENSAJES = 6, MAX_CHARS = 300;
@@ -117,22 +118,36 @@ module.exports = async function handler(req, res) {
   if (await contar("chat:ip:" + ipDe(req), 3600) > LIMITE_IP) return res.status(429).json({ error: "Demasiadas consultas. Probá más tarde." });
 
   const ultima = mensajes[mensajes.length - 1].content;
-  const ctl = new AbortController(), t = setTimeout(function () { ctl.abort(); }, 15000);
+  const FALLO = { error: "El asistente no está disponible ahora." };
+  const mensajesIA = [{ role: "system", content: SISTEMA }].concat(mensajes);
   try {
-    const r = await fetch(IA_URL, {
-      method: "POST", signal: ctl.signal,
-      headers: { "Content-Type": "application/json", Authorization: "Bearer " + process.env.IA_KEY },
-      body: JSON.stringify({ model: IA_MODELO, temperature: 0.2, max_tokens: 400, messages: [{ role: "system", content: SISTEMA }].concat(mensajes) })
-    });
-    if (!r.ok) { console.error("IA respondió", r.status); await registrar(ultima, "error_ia"); return res.status(502).json({ error: "El asistente no está disponible ahora." }); }
-    const d = await r.json();
-    const reply = d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content;
-    if (!reply) { await registrar(ultima, "error_ia"); return res.status(502).json({ error: "El asistente no está disponible ahora." }); }
-    await registrar(ultima, /no tengo ese dato/i.test(reply) ? "sin_dato" : "ia");
-    return res.status(200).json({ reply: String(reply).trim().slice(0, 1200) });
+    for (const modelo of MODELOS) {
+      const ctl = new AbortController(), t = setTimeout(function () { ctl.abort(); }, 9000);
+      let r;
+      try {
+        r = await fetch(IA_URL, {
+          method: "POST", signal: ctl.signal,
+          headers: { "Content-Type": "application/json", Authorization: "Bearer " + process.env.IA_KEY },
+          body: JSON.stringify({ model: modelo, temperature: 0.2, max_tokens: 400, messages: mensajesIA })
+        });
+      } finally { clearTimeout(t); }
+      if (!r.ok) {
+        let detalle = ""; try { detalle = (await r.text()).slice(0, 300); } catch (e) {}
+        console.error("IA respondió", r.status, "modelo:", modelo, detalle); // el detalle del proveedor no incluye la clave
+        if (r.status === 404 || r.status === 400) continue; // modelo inexistente o retirado: prueba el siguiente
+        break;
+      }
+      const d = await r.json();
+      const reply = d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content;
+      if (!reply) { console.error("IA sin contenido, modelo:", modelo); continue; }
+      await registrar(ultima, /no tengo ese dato/i.test(reply) ? "sin_dato" : "ia");
+      return res.status(200).json({ reply: String(reply).trim().slice(0, 1200) });
+    }
+    await registrar(ultima, "error_ia");
+    return res.status(502).json(FALLO);
   } catch (e) {
     console.error("Error llamando a la IA:", e && e.name);
     await registrar(ultima, "error_ia");
-    return res.status(502).json({ error: "El asistente no está disponible ahora." });
-  } finally { clearTimeout(t); }
+    return res.status(502).json(FALLO);
+  }
 };
