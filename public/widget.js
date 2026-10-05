@@ -34,7 +34,7 @@
   function norm(s) { return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " "); }
   var VACIAS = " que hay entre como para cual cuale por una uno los las del con mas esta esto ano carre cuant ";
   function stem(w) { return w.slice(0, 5); }
-  function utiles(s) { return norm(s).split(/\s+/).filter(function (w) { return w.length > 2 && VACIAS.indexOf(" " + stem(w) + " ") < 0; }); }
+  function utiles(s) { return norm(s).split(/\s+/).filter(function (w) { return w.length > 2 && VACIAS.indexOf(" " + stem(w) + " ") < 0 && !cerca(w, "carrera"); }); }
   function lev(a, b) {
     var p = [], i, j;
     for (j = 0; j <= b.length; j++) p[j] = j;
@@ -59,8 +59,9 @@
       var p = qs.filter(function (w) { return f.pal.some(function (k) { return cerca(w, k); }); }).length;
       if (p > max) { max = p; mejor = f; }
     });
-    // Se acepta con 2+ coincidencias si cubren la mitad de la pregunta, o con 1 si la pregunta es muy corta
-    if (max === 0 || (max === 1 && qs.length > 2) || (max >= 2 && max / qs.length < 0.5)) return null;
+    // Prioriza la precisión: si la coincidencia es dudosa, mejor consultar a la IA que responder otra cosa.
+    // Se acepta con 2+ coincidencias que cubran la mitad de la pregunta, o con 1 si es la única palabra útil.
+    if (max === 0 || (max === 1 && qs.length > 1) || (max >= 2 && max / qs.length < 0.5)) return null;
     return mejor;
   }
 
