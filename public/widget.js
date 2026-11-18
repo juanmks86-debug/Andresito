@@ -89,71 +89,71 @@
     ".f{display:flex;gap:6px;padding:10px;border-top:1px solid #e1e3e8;background:#fff}.f input{flex:1;min-width:0;padding:9px 12px;border:1px solid #ccc;border-radius:20px;font-size:16px;background:#fff;color:#111}" +
     ".f button{border:0;border-radius:50%;width:40px;height:40px;background:" + color + ";color:#fff;cursor:pointer;font-size:16px}.f button.on{background:#d93025;animation:y 1s infinite}@keyframes y{50%{opacity:.6}}" +
     "@media (prefers-color-scheme:dark){.p,.tip{background:#1c1d22;color:#eceef2}.m{background:#15161a}.a{background:#25272e;border-color:#353842;color:#eceef2}.f,.st{background:#1c1d22;border-color:#353842;color:#c9ccd3}.f input{background:#25272e;color:#eceef2;border-color:#3b3e48}.c button{background:#1c1d22;color:#9ec1ff;border-color:#9ec1ff}.nt{color:#9aa0ab}}" +
-    "@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-    /* ---- Andresito / rediseño tecnológico oscuro ---- */
-    :host{color-scheme:dark}
-    .b{width:64px;height:64px;border:1px solid #75e8ff;background:linear-gradient(145deg,#087fae,#315ee8);box-shadow:0 10px 34px #00bfe855,0 3px 12px #0008;border-radius:22px}
-    .b:hover{transform:translateY(-2px) scale(1.035);box-shadow:0 14px 38px #00bfe866,0 4px 14px #0009}
-    .b.d{transform:scale(1.07);box-shadow:0 14px 40px #00bfe877}
-    .b svg{width:34px;height:34px}
-    .b.n::after{border-color:#35dfff}
-    .tip{background:#10243a;color:#eaf6ff;border:1px solid #285171;border-radius:16px;box-shadow:0 12px 36px #0009}
-    .tip button{color:#a9c4dc}
-    .p{background:#0a1728;color:#eaf4ff;border:1px solid #24415e;border-radius:24px;box-shadow:0 24px 80px #000a,0 0 0 1px #50dfff12;overflow:hidden}
-    .h{background:linear-gradient(125deg,#123b5a 0%,#10243d 52%,#0b192c 100%);padding:15px 15px;border-bottom:1px solid #244763}
-    .av{width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044}
-    .av svg{width:27px;height:27px}
-    .ti b{font-size:16px;letter-spacing:.2px;color:#f2f9ff}
-    .ti small{font-size:10px;letter-spacing:.35px;color:#a7c3d9}
-    .presence{display:flex;align-items:center;gap:6px}
-    .presence i{width:7px;height:7px;border-radius:50%;background:#39e6b0;box-shadow:0 0 9px #39e6b0;flex:none}
-    .presence.busy i{background:#f5c15b;box-shadow:0 0 9px #f5c15b}
-    .presence.warn i{background:#ff7185;box-shadow:0 0 9px #ff7185}
-    .welcome{align-self:stretch;background:linear-gradient(145deg,#142f49,#0e2238);border:1px solid #2a506c;border-radius:20px;padding:15px;box-shadow:0 8px 24px #0003}
-    .welcome .eyebrow{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#63dafa;font-weight:700;margin-bottom:7px}
-    .welcome h3{font-size:17px;line-height:1.25;color:#f3f9ff;margin:0 0 7px;font-weight:700}
-    .welcome p{font-size:12px;line-height:1.5;color:#a9c2d8;margin:0 0 13px}
-    .cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-    .cats button{min-width:0;text-align:left;border:1px solid #2a5875;background:#102b45;color:#d9f4ff;border-radius:12px;padding:9px 10px;font-size:11px;font-weight:650;cursor:pointer}
-    .cats button:hover,.cats button:focus-visible{border-color:#48d5f4;background:#16405e;color:#fff}
-    .cats button span{display:block;color:#6fdcf5;font-size:9px;font-weight:500;margin-top:3px}
-    .cat-title{font-size:11px;color:#9fc1d9;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin:3px 0 0}
-    .g{white-space:pre-wrap;overflow-wrap:anywhere}
-    .a{line-height:1.65}
-    @media(max-width:360px){.cats{grid-template-columns:1fr}.welcome{padding:12px}}
-    .ac button{color:#c6e5f6;border-radius:10px;font-size:16px}
-    .ac button:hover{background:#ffffff16;color:#fff}
-    .m{background:radial-gradient(ellipse at 15% 0%,#12304b 0%,#0c1b2d 42%,#091525 100%);padding:17px 15px;gap:11px}
-    .g{max-width:88%;padding:11px 14px;border-radius:18px;font-size:13.5px;line-height:1.55;box-shadow:0 4px 14px #0002}
-    .u{background:linear-gradient(135deg,#087eaa,#245fce);color:#fff;border:1px solid #38bde0;border-bottom-right-radius:6px}
-    .a{background:linear-gradient(145deg,#142b43,#102239);border:1px solid #294965;color:#e5f1fc;border-bottom-left-radius:6px}
-    .g a{color:#72ddff}
-    .nt{color:#8faac4;background:#0d2033;border:1px solid #1d3a54;border-radius:13px;padding:9px 12px}
-    .t{background:#142b43;border:1px solid #294965}
-    .t i{background:#58dafa}
-    .c{gap:7px;padding:3px 1px}
-    .c button{border:1px solid #286080;background:#102a43;color:#72e2ff;border-radius:999px;padding:8px 12px;font-size:11.5px;font-weight:600}
-    .c button:hover{background:#17405e;border-color:#49c9ec;color:#fff}
-    .st{font-size:11px;color:#9ab4ca;padding:8px 13px;background:#0c1c2e;border-top:1px solid #1c3a54}
-    .f{gap:8px;padding:12px;background:#0a1728;border-top:1px solid #1e3c56}
-    .f input{padding:12px 15px;border:1px solid #294b68;border-radius:15px;font-size:14px;background:#10243a;color:#f0f8ff;box-shadow:inset 0 1px 3px #0003}
-    .f input::placeholder{color:#7895ad}
-    .f input:focus{border-color:#32c8ed;outline:2px solid #32c8ed33;outline-offset:0}
-    .f button{width:42px;height:42px;flex:none;background:linear-gradient(145deg,#00bddd,#3569e8);box-shadow:0 5px 16px #087eb455;color:#fff}
-    .f button:hover{filter:brightness(1.12);transform:translateY(-1px)}
-    .f button.on{background:#d94a63}
-    button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offset:3px}
-    @media (min-width:521px){.p{backdrop-filter:blur(18px)}}
-    @media (max-width:520px){
-      .p{border-radius:20px}
-      .h{padding:13px 12px}
-      .m{padding:15px 12px}
-      .g{max-width:91%;font-size:13.5px}
-      .f{padding:10px}
-      .ac button{padding:5px}
-    }
-    @media (prefers-reduced-motion:reduce){.b.n::after{animation:none!important}}
-</style>" +
+    `@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+/* ---- Andresito / rediseño tecnológico oscuro ---- */
+:host{color-scheme:dark}
+.b{width:64px;height:64px;border:1px solid #75e8ff;background:linear-gradient(145deg,#087fae,#315ee8);box-shadow:0 10px 34px #00bfe855,0 3px 12px #0008;border-radius:22px}
+.b:hover{transform:translateY(-2px) scale(1.035);box-shadow:0 14px 38px #00bfe866,0 4px 14px #0009}
+.b.d{transform:scale(1.07);box-shadow:0 14px 40px #00bfe877}
+.b svg{width:34px;height:34px}
+.b.n::after{border-color:#35dfff}
+.tip{background:#10243a;color:#eaf6ff;border:1px solid #285171;border-radius:16px;box-shadow:0 12px 36px #0009}
+.tip button{color:#a9c4dc}
+.p{background:#0a1728;color:#eaf4ff;border:1px solid #24415e;border-radius:24px;box-shadow:0 24px 80px #000a,0 0 0 1px #50dfff12;overflow:hidden}
+.h{background:linear-gradient(125deg,#123b5a 0%,#10243d 52%,#0b192c 100%);padding:15px 15px;border-bottom:1px solid #244763}
+.av{width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044}
+.av svg{width:27px;height:27px}
+.ti b{font-size:16px;letter-spacing:.2px;color:#f2f9ff}
+.ti small{font-size:10px;letter-spacing:.35px;color:#a7c3d9}
+.presence{display:flex;align-items:center;gap:6px}
+.presence i{width:7px;height:7px;border-radius:50%;background:#39e6b0;box-shadow:0 0 9px #39e6b0;flex:none}
+.presence.busy i{background:#f5c15b;box-shadow:0 0 9px #f5c15b}
+.presence.warn i{background:#ff7185;box-shadow:0 0 9px #ff7185}
+.welcome{align-self:stretch;background:linear-gradient(145deg,#142f49,#0e2238);border:1px solid #2a506c;border-radius:20px;padding:15px;box-shadow:0 8px 24px #0003}
+.welcome .eyebrow{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#63dafa;font-weight:700;margin-bottom:7px}
+.welcome h3{font-size:17px;line-height:1.25;color:#f3f9ff;margin:0 0 7px;font-weight:700}
+.welcome p{font-size:12px;line-height:1.5;color:#a9c2d8;margin:0 0 13px}
+.cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.cats button{min-width:0;text-align:left;border:1px solid #2a5875;background:#102b45;color:#d9f4ff;border-radius:12px;padding:9px 10px;font-size:11px;font-weight:650;cursor:pointer}
+.cats button:hover,.cats button:focus-visible{border-color:#48d5f4;background:#16405e;color:#fff}
+.cats button span{display:block;color:#6fdcf5;font-size:9px;font-weight:500;margin-top:3px}
+.cat-title{font-size:11px;color:#9fc1d9;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin:3px 0 0}
+.g{white-space:pre-wrap;overflow-wrap:anywhere}
+.a{line-height:1.65}
+@media(max-width:360px){.cats{grid-template-columns:1fr}.welcome{padding:12px}}
+.ac button{color:#c6e5f6;border-radius:10px;font-size:16px}
+.ac button:hover{background:#ffffff16;color:#fff}
+.m{background:radial-gradient(ellipse at 15% 0%,#12304b 0%,#0c1b2d 42%,#091525 100%);padding:17px 15px;gap:11px}
+.g{max-width:88%;padding:11px 14px;border-radius:18px;font-size:13.5px;line-height:1.55;box-shadow:0 4px 14px #0002}
+.u{background:linear-gradient(135deg,#087eaa,#245fce);color:#fff;border:1px solid #38bde0;border-bottom-right-radius:6px}
+.a{background:linear-gradient(145deg,#142b43,#102239);border:1px solid #294965;color:#e5f1fc;border-bottom-left-radius:6px}
+.g a{color:#72ddff}
+.nt{color:#8faac4;background:#0d2033;border:1px solid #1d3a54;border-radius:13px;padding:9px 12px}
+.t{background:#142b43;border:1px solid #294965}
+.t i{background:#58dafa}
+.c{gap:7px;padding:3px 1px}
+.c button{border:1px solid #286080;background:#102a43;color:#72e2ff;border-radius:999px;padding:8px 12px;font-size:11.5px;font-weight:600}
+.c button:hover{background:#17405e;border-color:#49c9ec;color:#fff}
+.st{font-size:11px;color:#9ab4ca;padding:8px 13px;background:#0c1c2e;border-top:1px solid #1c3a54}
+.f{gap:8px;padding:12px;background:#0a1728;border-top:1px solid #1e3c56}
+.f input{padding:12px 15px;border:1px solid #294b68;border-radius:15px;font-size:14px;background:#10243a;color:#f0f8ff;box-shadow:inset 0 1px 3px #0003}
+.f input::placeholder{color:#7895ad}
+.f input:focus{border-color:#32c8ed;outline:2px solid #32c8ed33;outline-offset:0}
+.f button{width:42px;height:42px;flex:none;background:linear-gradient(145deg,#00bddd,#3569e8);box-shadow:0 5px 16px #087eb455;color:#fff}
+.f button:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.f button.on{background:#d94a63}
+button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offset:3px}
+@media (min-width:521px){.p{backdrop-filter:blur(18px)}}
+@media (max-width:520px){
+  .p{border-radius:20px}
+  .h{padding:13px 12px}
+  .m{padding:15px 12px}
+  .g{max-width:91%;font-size:13.5px}
+  .f{padding:10px}
+  .ac button{padding:5px}
+}
+@media (prefers-reduced-motion:reduce){.b.n::after{animation:none!important}}
+</style>`
     '<button class="b n" aria-expanded="false">' + ROBOT + '</button>' +
     '<div class="tip" role="status"><span id="tt"></span><button id="tx" aria-label="Cerrar sugerencia">✕</button></div>' +
     '<div class="p" role="dialog"><div class="h"><div class="av">' + ROBOT + '</div><div class="ti"><b id="nom"></b><small class="presence" id="presencia"><i></i><span id="textoEstado">Conectando…</span></small></div><span class="ac">' +
