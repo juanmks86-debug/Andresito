@@ -113,14 +113,26 @@
 .welcome .eyebrow{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#63dafa;font-weight:700;margin-bottom:7px}
 .welcome h3{font-size:17px;line-height:1.25;color:#f3f9ff;margin:0 0 7px;font-weight:700}
 .welcome p{font-size:12px;line-height:1.5;color:#a9c2d8;margin:0 0 13px}
-.cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-.cats button{min-width:0;text-align:left;border:1px solid #2a5875;background:#102b45;color:#d9f4ff;border-radius:12px;padding:9px 10px;font-size:11px;font-weight:650;cursor:pointer}
-.cats button:hover,.cats button:focus-visible{border-color:#48d5f4;background:#16405e;color:#fff}
-.cats button span{display:block;color:#6fdcf5;font-size:9px;font-weight:500;margin-top:3px}
+.cat-wrap{position:relative;display:flex;align-items:center;gap:5px}
+.cats{display:flex;gap:9px;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x mandatory;scrollbar-width:none;padding:3px 2px 8px;flex:1;min-width:0}
+.cats::-webkit-scrollbar{display:none}
+.cats button{flex:0 0 104px;min-width:104px;min-height:91px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:7px;text-align:left;border:1px solid var(--cat-border);background:var(--cat-bg);color:#eaf4ff;border-radius:15px;padding:10px;font-size:10.5px;font-weight:700;cursor:pointer;scroll-snap-align:start;transition:transform .16s,border-color .16s,box-shadow .16s}
+.cats button:hover,.cats button:focus-visible{transform:translateY(-2px);border-color:var(--cat-color);box-shadow:0 5px 16px #0003}
+.cats button .cat-icon{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;background:var(--cat-icon-bg);color:var(--cat-color)}
+.cats button .cat-icon svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cats button .cat-label{line-height:1.2;white-space:normal}
+.cats button span{display:none}
+.cats .ingreso{--cat-color:#60a5fa;--cat-bg:#142d49;--cat-border:#28517d;--cat-icon-bg:#1d4773}
+.cats .materias{--cat-color:#4ade80;--cat-bg:#12352f;--cat-border:#23634d;--cat-icon-bg:#1b5942}
+.cats .inscripciones{--cat-color:#fb923c;--cat-bg:#3b291d;--cat-border:#80502d;--cat-icon-bg:#663b20}
+.cats .carrera{--cat-color:#c084fc;--cat-bg:#302044;--cat-border:#644184;--cat-icon-bg:#50316d}
+.cats .vida{--cat-color:#f472b6;--cat-bg:#3b2034;--cat-border:#78405f;--cat-icon-bg:#63304f}
+.cat-arrow{flex:none;width:25px;height:31px;border:1px solid #31536d;border-radius:8px;background:#102a43;color:#9edcf2;cursor:pointer}
+.cat-arrow:hover{background:#17405e;color:#fff}
 .cat-title{font-size:11px;color:#9fc1d9;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin:3px 0 0}
 .g{white-space:pre-wrap;overflow-wrap:anywhere}
 .a{line-height:1.65}
-@media(max-width:360px){.cats{grid-template-columns:1fr}.welcome{padding:12px}}
+@media(max-width:360px){.welcome{padding:12px}.cats button{flex-basis:96px;min-width:96px}}
 .ac button{color:#c6e5f6;border-radius:10px;font-size:16px}
 .ac button:hover{background:#ffffff16;color:#fff}
 .m{background:radial-gradient(ellipse at 15% 0%,#12304b 0%,#0c1b2d 42%,#091525 100%);padding:17px 15px;gap:11px}
@@ -278,14 +290,30 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
     var eyebrow = document.createElement("div"); eyebrow.className = "eyebrow"; eyebrow.textContent = "Asistente académico · IES N.º 6";
     var titulo = document.createElement("h3"); titulo.textContent = "¡Hola! Soy " + nombre + ".";
     var texto = document.createElement("p"); texto.textContent = "Estoy para ayudarte con la Tecnicatura en Ciencia de Datos e Inteligencia Artificial. Elegí un tema o escribime tu consulta.";
-    var botones = document.createElement("div"); botones.className = "cats";
-    CATEGORIAS.forEach(function (cat) {
-      var b = document.createElement("button"); b.type = "button"; b.textContent = cat.nombre;
-      var sub = document.createElement("span"); sub.textContent = cat.detalle; b.appendChild(sub);
+    var wrap = document.createElement("div"); wrap.className = "cat-wrap";
+    var anterior = document.createElement("button"); anterior.className = "cat-arrow"; anterior.type = "button"; anterior.textContent = "‹"; anterior.setAttribute("aria-label", "Ver accesos anteriores");
+    var botones = document.createElement("div"); botones.className = "cats"; botones.setAttribute("aria-label", "Accesos rápidos");
+    var siguiente = document.createElement("button"); siguiente.className = "cat-arrow"; siguiente.type = "button"; siguiente.textContent = "›"; siguiente.setAttribute("aria-label", "Ver más accesos");
+    var iconos = [
+      '<svg viewBox="0 0 24 24"><path d="m2 9 10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3.5 2.5 8.5 2.5 12 0v-5M22 9v6"/></svg>',
+      '<svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"/><path d="M4 5v17M8 7h8M8 11h8"/></svg>',
+      '<svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5h6V7H9zM8 12h8M8 16h5"/></svg>',
+      '<svg viewBox="0 0 24 24"><path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3Z"/><path d="M9 22h6M9 11l2 2 4-4M19 5l2-2M5 5 3 3"/></svg>',
+      '<svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V8l7-4 7 4v13M9 21v-7h6v7M8 10h.01M16 10h.01"/></svg>'
+    ];
+    var clases = ["ingreso","materias","inscripciones","carrera","vida"];
+    CATEGORIAS.forEach(function (cat, i) {
+      var b = document.createElement("button"); b.type = "button"; b.className = clases[i];
+      var ico = document.createElement("span"); ico.className = "cat-icon"; ico.innerHTML = iconos[i];
+      var label = document.createElement("span"); label.className = "cat-label"; label.textContent = cat.nombre;
+      b.appendChild(ico); b.appendChild(label);
       b.setAttribute("aria-label", cat.nombre + ": " + cat.detalle); b.onclick = function () { mostrarCategoria(cat); };
       botones.appendChild(b);
     });
-    card.appendChild(eyebrow); card.appendChild(titulo); card.appendChild(texto); card.appendChild(botones);
+    anterior.onclick = function () { botones.scrollBy({ left: -220, behavior: "smooth" }); };
+    siguiente.onclick = function () { botones.scrollBy({ left: 220, behavior: "smooth" }); };
+    wrap.appendChild(anterior); wrap.appendChild(botones); wrap.appendChild(siguiente);
+    card.appendChild(eyebrow); card.appendChild(titulo); card.appendChild(texto); card.appendChild(wrap);
     msgs.appendChild(card);
     agregar("Mis respuestas son orientativas. Para confirmar trámites, fechas o documentación, consultá también en el IES N.º 6.", "nt");
     msgs.scrollTop = msgs.scrollHeight;
@@ -379,7 +407,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
       panel.style.width = (W - 16) + "px"; panel.style.height = (H2 - 16) + "px";
       return;
     }
-    var H = window.innerHeight, pw = Math.min(420, W - 20), ph = Math.min(650, H - 110);
+    var H = window.innerHeight, pw = Math.min(380, W - 24), ph = Math.min(570, H - 72);
     var bl = parseFloat(bub.style.left), bt = parseFloat(bub.style.top);
     var l = (bl + TAM / 2 > W / 2) ? bl + TAM - pw : bl;
     var t = (bt - ph - 12 >= 10) ? bt - ph - 12 : bt + TAM + 12;
