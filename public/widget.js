@@ -113,7 +113,7 @@
 .welcome .eyebrow{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#63dafa;font-weight:700;margin-bottom:7px}
 .welcome h3{font-size:17px;line-height:1.25;color:#f3f9ff;margin:0 0 7px;font-weight:700}
 .welcome p{font-size:12px;line-height:1.5;color:#a9c2d8;margin:0 0 13px}
-.cat-wrap{position:relative;display:flex;align-items:center;gap:5px}
+.quick-dock{flex:none;padding:7px 10px 8px;background:#0c1c2e;border-top:1px solid #1c3a54}.quick-dock-title{font-size:9px;letter-spacing:.8px;font-weight:700;color:#86a9c4;margin:0 0 5px 2px}.cat-wrap{position:relative;display:flex;align-items:center;gap:5px}
 .cats{display:flex;gap:9px;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x mandatory;scrollbar-width:none;padding:3px 2px 8px;flex:1;min-width:0}
 .cats::-webkit-scrollbar{display:none}
 .cats button{flex:0 0 78px;min-width:78px;height:68px;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;border:1px solid var(--cat-border);background:var(--cat-bg);color:#eaf4ff;border-radius:11px;padding:6px 4px;font-size:9px;line-height:1.1;font-weight:650;cursor:pointer;scroll-snap-align:start;transition:transform .16s,border-color .16s,box-shadow .16s}
@@ -289,7 +289,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
     var eyebrow = document.createElement("div"); eyebrow.className = "eyebrow"; eyebrow.textContent = "Asistente académico · IES N.º 6";
     var titulo = document.createElement("h3"); titulo.textContent = "¡Hola! Soy " + nombre + ".";
     var texto = document.createElement("p"); texto.textContent = "Estoy para ayudarte con la Tecnicatura en Ciencia de Datos e Inteligencia Artificial. Elegí un tema o escribime tu consulta.";
-    var wrap = document.createElement("div"); wrap.className = "cat-wrap";
+    var dock = document.createElement("section"); dock.className = "quick-dock"; dock.setAttribute("aria-label", "Accesos rápidos"); var dockTitle = document.createElement("div"); dockTitle.className = "quick-dock-title"; dockTitle.textContent = "ACCESOS RÁPIDOS"; dock.appendChild(dockTitle); var wrap = document.createElement("div"); wrap.className = "cat-wrap";
     var anterior = document.createElement("button"); anterior.className = "cat-arrow"; anterior.type = "button"; anterior.textContent = "‹"; anterior.setAttribute("aria-label", "Ver accesos anteriores");
     var botones = document.createElement("div"); botones.className = "cats"; botones.setAttribute("aria-label", "Accesos rápidos");
     var siguiente = document.createElement("button"); siguiente.className = "cat-arrow"; siguiente.type = "button"; siguiente.textContent = "›"; siguiente.setAttribute("aria-label", "Ver más accesos");
@@ -312,8 +312,8 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
     anterior.onclick = function () { botones.scrollBy({ left: -220, behavior: "smooth" }); };
     siguiente.onclick = function () { botones.scrollBy({ left: 220, behavior: "smooth" }); };
     wrap.appendChild(anterior); wrap.appendChild(botones); wrap.appendChild(siguiente);
-    card.appendChild(eyebrow); card.appendChild(titulo); card.appendChild(texto); card.appendChild(wrap);
-    msgs.appendChild(card);
+    card.appendChild(eyebrow); card.appendChild(titulo); card.appendChild(texto);
+    msgs.appendChild(card); dock.appendChild(wrap); panel.insertBefore(dock, st);
     agregar("Mis respuestas son orientativas. Para confirmar trámites, fechas o documentación, consultá también en el IES N.º 6.", "nt");
     msgs.scrollTop = msgs.scrollHeight;
   }
