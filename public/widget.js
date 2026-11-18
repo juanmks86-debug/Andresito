@@ -153,7 +153,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
   .ac button{padding:5px}
 }
 @media (prefers-reduced-motion:reduce){.b.n::after{animation:none!important}}
-</style>`
+</style>` +
     '<button class="b n" aria-expanded="false">' + ROBOT + '</button>' +
     '<div class="tip" role="status"><span id="tt"></span><button id="tx" aria-label="Cerrar sugerencia">✕</button></div>' +
     '<div class="p" role="dialog"><div class="h"><div class="av">' + ROBOT + '</div><div class="ti"><b id="nom"></b><small class="presence" id="presencia"><i></i><span id="textoEstado">Conectando…</span></small></div><span class="ac">' +
