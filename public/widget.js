@@ -241,6 +241,7 @@
     chips(sugerencias(4));
   }
   bienvenida();
+  estadoAsistente("busy", "Conectando…");
   fetch(faqUrl, { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; }).then(function (l) {
     prepararFAQ(Array.isArray(l) ? l : []);
     if (!msgs.querySelector(".u")) chips(sugerencias(4)); // sigue sin preguntas: ofrece las sugeridas
