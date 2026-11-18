@@ -116,23 +116,22 @@
 .cat-wrap{position:relative;display:flex;align-items:center;gap:5px}
 .cats{display:flex;gap:9px;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x mandatory;scrollbar-width:none;padding:3px 2px 8px;flex:1;min-width:0}
 .cats::-webkit-scrollbar{display:none}
-.cats button{flex:0 0 104px;min-width:104px;min-height:91px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:7px;text-align:left;border:1px solid var(--cat-border);background:var(--cat-bg);color:#eaf4ff;border-radius:15px;padding:10px;font-size:10.5px;font-weight:700;cursor:pointer;scroll-snap-align:start;transition:transform .16s,border-color .16s,box-shadow .16s}
+.cats button{flex:0 0 78px;min-width:78px;height:68px;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;border:1px solid var(--cat-border);background:var(--cat-bg);color:#eaf4ff;border-radius:11px;padding:6px 4px;font-size:9px;line-height:1.1;font-weight:650;cursor:pointer;scroll-snap-align:start;transition:transform .16s,border-color .16s,box-shadow .16s}
 .cats button:hover,.cats button:focus-visible{transform:translateY(-2px);border-color:var(--cat-color);box-shadow:0 5px 16px #0003}
-.cats button .cat-icon{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;background:var(--cat-icon-bg);color:var(--cat-color)}
-.cats button .cat-icon svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.cats button .cat-label{line-height:1.2;white-space:normal}
-.cats button span{display:none}
+.cats button .cat-icon{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--cat-icon-bg);color:var(--cat-color);flex:none}
+.cats button .cat-icon svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cats button .cat-label{display:block;line-height:1.1;white-space:normal;max-width:100%;overflow-wrap:anywhere}
 .cats .ingreso{--cat-color:#60a5fa;--cat-bg:#142d49;--cat-border:#28517d;--cat-icon-bg:#1d4773}
 .cats .materias{--cat-color:#4ade80;--cat-bg:#12352f;--cat-border:#23634d;--cat-icon-bg:#1b5942}
 .cats .inscripciones{--cat-color:#fb923c;--cat-bg:#3b291d;--cat-border:#80502d;--cat-icon-bg:#663b20}
 .cats .carrera{--cat-color:#c084fc;--cat-bg:#302044;--cat-border:#644184;--cat-icon-bg:#50316d}
 .cats .vida{--cat-color:#f472b6;--cat-bg:#3b2034;--cat-border:#78405f;--cat-icon-bg:#63304f}
-.cat-arrow{flex:none;width:25px;height:31px;border:1px solid #31536d;border-radius:8px;background:#102a43;color:#9edcf2;cursor:pointer}
+.cat-arrow{flex:none;width:22px;height:27px;border:1px solid #31536d;border-radius:8px;background:#102a43;color:#9edcf2;cursor:pointer}
 .cat-arrow:hover{background:#17405e;color:#fff}
 .cat-title{font-size:11px;color:#9fc1d9;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin:3px 0 0}
 .g{white-space:pre-wrap;overflow-wrap:anywhere}
 .a{line-height:1.65}
-@media(max-width:360px){.welcome{padding:12px}.cats button{flex-basis:96px;min-width:96px}}
+@media(max-width:360px){.welcome{padding:12px}.cats{gap:6px}.cats button{flex-basis:72px;min-width:72px;height:64px;min-height:64px;font-size:8.5px}.cats button .cat-icon{width:22px;height:22px}}
 .ac button{color:#c6e5f6;border-radius:10px;font-size:16px}
 .ac button:hover{background:#ffffff16;color:#fff}
 .m{background:radial-gradient(ellipse at 15% 0%,#12304b 0%,#0c1b2d 42%,#091525 100%);padding:17px 15px;gap:11px}
