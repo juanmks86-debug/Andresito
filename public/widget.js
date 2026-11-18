@@ -109,18 +109,18 @@
 .presence i{width:7px;height:7px;border-radius:50%;background:#39e6b0;box-shadow:0 0 9px #39e6b0;flex:none}
 .presence.busy i{background:#f5c15b;box-shadow:0 0 9px #f5c15b}
 .presence.warn i{background:#ff7185;box-shadow:0 0 9px #ff7185}
-.welcome{align-self:stretch;background:linear-gradient(145deg,#142f49,#0e2238);border:1px solid #2a506c;border-radius:20px;padding:15px;box-shadow:0 8px 24px #0003}
-.welcome .eyebrow{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#63dafa;font-weight:700;margin-bottom:7px}
-.welcome h3{font-size:17px;line-height:1.25;color:#f3f9ff;margin:0 0 7px;font-weight:700}
-.welcome p{font-size:12px;line-height:1.5;color:#a9c2d8;margin:0 0 13px}
-.cat-wrap{position:relative;display:flex;align-items:center;gap:5px}
-.cats{display:flex;gap:9px;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x mandatory;scrollbar-width:none;padding:3px 2px 8px;flex:1;min-width:0}
+.welcome{align-self:stretch;background:linear-gradient(145deg,#142f49,#0e2238);border:1px solid #2a506c;border-radius:14px;padding:10px 12px;box-shadow:0 4px 14px #0002}
+.welcome .eyebrow{font-size:9px;letter-spacing:.8px;text-transform:uppercase;color:#63dafa;font-weight:700;margin-bottom:3px}
+.welcome h3{font-size:14px;line-height:1.2;color:#f3f9ff;margin:0 0 4px;font-weight:700}
+.welcome p{font-size:10.5px;line-height:1.35;color:#a9c2d8;margin:0}
+.quick-dock{flex:none;padding:5px 9px 6px;background:#0c1c2e;border-top:1px solid #1c3a54}.quick-dock-title{font-size:8px;letter-spacing:.7px;font-weight:700;color:#86a9c4;margin:0 0 3px 2px}.cat-wrap{position:relative;display:flex;align-items:center;gap:5px}
+.cats{display:flex;gap:6px;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x mandatory;scrollbar-width:none;padding:3px 2px 8px;flex:1;min-width:0}
 .cats::-webkit-scrollbar{display:none}
-.cats button{flex:0 0 78px;min-width:78px;height:68px;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;border:1px solid var(--cat-border);background:var(--cat-bg);color:#eaf4ff;border-radius:11px;padding:6px 4px;font-size:9px;line-height:1.1;font-weight:650;cursor:pointer;scroll-snap-align:start;transition:transform .16s,border-color .16s,box-shadow .16s}
+.cats button{flex:0 0 62px;min-width:62px;height:54px;min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;border:1px solid var(--cat-border);background:var(--cat-bg);color:#eaf4ff;border-radius:9px;padding:4px 3px;font-size:8px;line-height:1.1;font-weight:650;cursor:pointer;scroll-snap-align:start;transition:transform .16s,border-color .16s,box-shadow .16s}
 .cats button:hover,.cats button:focus-visible{transform:translateY(-2px);border-color:var(--cat-color);box-shadow:0 5px 16px #0003}
-.cats button .cat-icon{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;background:var(--cat-icon-bg);color:var(--cat-color);flex:none}
-.cats button .cat-icon svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.cats button .cat-label{display:block;line-height:1.1;white-space:normal;max-width:100%;overflow-wrap:anywhere}
+.cats button .cat-icon{width:19px;height:19px;border-radius:6px;display:grid;place-items:center;background:var(--cat-icon-bg);color:var(--cat-color);flex:none}
+.cats button .cat-icon svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cats button .cat-label{display:block;font-size:8px;line-height:1.05;white-space:normal;max-width:100%;overflow-wrap:anywhere}
 .cats .ingreso{--cat-color:#60a5fa;--cat-bg:#142d49;--cat-border:#28517d;--cat-icon-bg:#1d4773}
 .cats .materias{--cat-color:#4ade80;--cat-bg:#12352f;--cat-border:#23634d;--cat-icon-bg:#1b5942}
 .cats .inscripciones{--cat-color:#fb923c;--cat-bg:#3b291d;--cat-border:#80502d;--cat-icon-bg:#663b20}
@@ -131,7 +131,7 @@
 .cat-title{font-size:11px;color:#9fc1d9;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin:3px 0 0}
 .g{white-space:pre-wrap;overflow-wrap:anywhere}
 .a{line-height:1.65}
-@media(max-width:360px){.welcome{padding:12px}.cats{gap:6px}.cats button{flex-basis:72px;min-width:72px;height:64px;min-height:64px;font-size:8.5px}.cats button .cat-icon{width:22px;height:22px}}
+@media(max-width:360px){.welcome{padding:9px 10px}.cats{gap:5px}.cats button{flex-basis:56px;min-width:56px;height:50px;min-height:50px;font-size:7.5px}.cats button .cat-icon{width:18px;height:18px}}
 .ac button{color:#c6e5f6;border-radius:10px;font-size:16px}
 .ac button:hover{background:#ffffff16;color:#fff}
 .m{background:radial-gradient(ellipse at 15% 0%,#12304b 0%,#0c1b2d 42%,#091525 100%);padding:17px 15px;gap:11px}
@@ -289,7 +289,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
     var eyebrow = document.createElement("div"); eyebrow.className = "eyebrow"; eyebrow.textContent = "Asistente académico · IES N.º 6";
     var titulo = document.createElement("h3"); titulo.textContent = "¡Hola! Soy " + nombre + ".";
     var texto = document.createElement("p"); texto.textContent = "Estoy para ayudarte con la Tecnicatura en Ciencia de Datos e Inteligencia Artificial. Elegí un tema o escribime tu consulta.";
-    var wrap = document.createElement("div"); wrap.className = "cat-wrap";
+    var dock = document.createElement("section"); dock.className = "quick-dock"; dock.setAttribute("aria-label", "Accesos rápidos"); var dockTitle = document.createElement("div"); dockTitle.className = "quick-dock-title"; dockTitle.textContent = "ACCESOS RÁPIDOS"; dock.appendChild(dockTitle); var wrap = document.createElement("div"); wrap.className = "cat-wrap";
     var anterior = document.createElement("button"); anterior.className = "cat-arrow"; anterior.type = "button"; anterior.textContent = "‹"; anterior.setAttribute("aria-label", "Ver accesos anteriores");
     var botones = document.createElement("div"); botones.className = "cats"; botones.setAttribute("aria-label", "Accesos rápidos");
     var siguiente = document.createElement("button"); siguiente.className = "cat-arrow"; siguiente.type = "button"; siguiente.textContent = "›"; siguiente.setAttribute("aria-label", "Ver más accesos");
@@ -312,8 +312,8 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
     anterior.onclick = function () { botones.scrollBy({ left: -220, behavior: "smooth" }); };
     siguiente.onclick = function () { botones.scrollBy({ left: 220, behavior: "smooth" }); };
     wrap.appendChild(anterior); wrap.appendChild(botones); wrap.appendChild(siguiente);
-    card.appendChild(eyebrow); card.appendChild(titulo); card.appendChild(texto); card.appendChild(wrap);
-    msgs.appendChild(card);
+    card.appendChild(eyebrow); card.appendChild(titulo); card.appendChild(texto);
+    msgs.appendChild(card); dock.appendChild(wrap); panel.insertBefore(dock, st);
     agregar("Mis respuestas son orientativas. Para confirmar trámites, fechas o documentación, consultá también en el IES N.º 6.", "nt");
     msgs.scrollTop = msgs.scrollHeight;
   }
@@ -400,10 +400,15 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
   }
   function posPanel() {
     var W = window.innerWidth, vv = window.visualViewport;
-    if (movil()) { // en celular el chat ocupa casi toda la pantalla y respeta el teclado
+    if (movil()) { // ventana compacta en celular; deja visible parte de la página
       var H2 = vv ? vv.height : window.innerHeight;
-      panel.style.left = "8px"; panel.style.top = ((vv ? vv.offsetTop : 0) + 8) + "px";
-      panel.style.width = (W - 16) + "px"; panel.style.height = (H2 - 16) + "px";
+      var offsetY = vv ? vv.offsetTop : 0;
+      var pw2 = Math.min(W - 24, 420);
+      var ph2 = Math.min(620, Math.round(H2 * 0.74), H2 - 24);
+      panel.style.width = pw2 + "px";
+      panel.style.height = Math.max(180, ph2) + "px";
+      panel.style.left = Math.max(12, (W - pw2) / 2) + "px";
+      panel.style.top = (offsetY + H2 - Math.max(180, ph2) - 12) + "px";
       return;
     }
     var H = window.innerHeight, pw = Math.min(380, W - 24), ph = Math.min(570, H - 72);
