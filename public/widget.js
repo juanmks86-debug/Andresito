@@ -116,11 +116,11 @@
 .cat-wrap{position:relative;display:flex;align-items:center;gap:5px}
 .cats{display:flex;gap:9px;overflow-x:auto;scroll-behavior:smooth;scroll-snap-type:x mandatory;scrollbar-width:none;padding:3px 2px 8px;flex:1;min-width:0}
 .cats::-webkit-scrollbar{display:none}
-.cats button{flex:0 0 104px;min-width:104px;min-height:91px;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:7px;text-align:left;border:1px solid var(--cat-border);background:var(--cat-bg);color:#eaf4ff;border-radius:15px;padding:10px;font-size:10.5px;font-weight:700;cursor:pointer;scroll-snap-align:start;transition:transform .16s,border-color .16s,box-shadow .16s}
+.cats button{flex:0 0 76px;min-width:76px;min-height:66px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;border:1px solid var(--cat-border);background:var(--cat-bg);color:#eaf4ff;border-radius:12px;padding:7px 5px;font-size:9px;font-weight:700;cursor:pointer;scroll-snap-align:start;transition:transform .16s,border-color .16s,box-shadow .16s}
 .cats button:hover,.cats button:focus-visible{transform:translateY(-2px);border-color:var(--cat-color);box-shadow:0 5px 16px #0003}
-.cats button .cat-icon{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;background:var(--cat-icon-bg);color:var(--cat-color)}
-.cats button .cat-icon svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.cats button .cat-label{line-height:1.2;white-space:normal}
+.cats button .cat-icon{width:25px;height:25px;border-radius:8px;display:grid;place-items:center;background:var(--cat-icon-bg);color:var(--cat-color)}
+.cats button .cat-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cats button .cat-label{line-height:1.1;white-space:normal;max-width:100%;font-size:9px}
 .cats button span{display:none}
 .cats .ingreso{--cat-color:#60a5fa;--cat-bg:#142d49;--cat-border:#28517d;--cat-icon-bg:#1d4773}
 .cats .materias{--cat-color:#4ade80;--cat-bg:#12352f;--cat-border:#23634d;--cat-icon-bg:#1b5942}
@@ -132,7 +132,7 @@
 .cat-title{font-size:11px;color:#9fc1d9;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin:3px 0 0}
 .g{white-space:pre-wrap;overflow-wrap:anywhere}
 .a{line-height:1.65}
-@media(max-width:360px){.welcome{padding:12px}.cats button{flex-basis:96px;min-width:96px}}
+@media(max-width:360px){.welcome{padding:12px}.cats button{flex-basis:70px;min-width:70px}}
 .ac button{color:#c6e5f6;border-radius:10px;font-size:16px}
 .ac button:hover{background:#ffffff16;color:#fff}
 .m{background:radial-gradient(ellipse at 15% 0%,#12304b 0%,#0c1b2d 42%,#091525 100%);padding:17px 15px;gap:11px}
