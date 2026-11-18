@@ -400,10 +400,15 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
   }
   function posPanel() {
     var W = window.innerWidth, vv = window.visualViewport;
-    if (movil()) { // en celular el chat ocupa casi toda la pantalla y respeta el teclado
+    if (movil()) { // ventana compacta en celular; deja visible parte de la página
       var H2 = vv ? vv.height : window.innerHeight;
-      panel.style.left = "8px"; panel.style.top = ((vv ? vv.offsetTop : 0) + 8) + "px";
-      panel.style.width = (W - 16) + "px"; panel.style.height = (H2 - 16) + "px";
+      var offsetY = vv ? vv.offsetTop : 0;
+      var pw2 = Math.min(W - 24, 420);
+      var ph2 = Math.min(620, Math.round(H2 * 0.74), H2 - 24);
+      panel.style.width = pw2 + "px";
+      panel.style.height = Math.max(180, ph2) + "px";
+      panel.style.left = Math.max(12, (W - pw2) / 2) + "px";
+      panel.style.top = (offsetY + H2 - Math.max(180, ph2) - 12) + "px";
       return;
     }
     var H = window.innerHeight, pw = Math.min(380, W - 24), ph = Math.min(570, H - 72);
