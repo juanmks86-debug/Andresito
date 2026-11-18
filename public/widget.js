@@ -105,7 +105,22 @@
     .av svg{width:27px;height:27px}
     .ti b{font-size:16px;letter-spacing:.2px;color:#f2f9ff}
     .ti small{font-size:10px;letter-spacing:.35px;color:#a7c3d9}
-    .ti i{background:#39e6b0;box-shadow:0 0 9px #39e6b0}
+    .presence{display:flex;align-items:center;gap:6px}
+    .presence i{width:7px;height:7px;border-radius:50%;background:#39e6b0;box-shadow:0 0 9px #39e6b0;flex:none}
+    .presence.busy i{background:#f5c15b;box-shadow:0 0 9px #f5c15b}
+    .presence.warn i{background:#ff7185;box-shadow:0 0 9px #ff7185}
+    .welcome{align-self:stretch;background:linear-gradient(145deg,#142f49,#0e2238);border:1px solid #2a506c;border-radius:20px;padding:15px;box-shadow:0 8px 24px #0003}
+    .welcome .eyebrow{font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#63dafa;font-weight:700;margin-bottom:7px}
+    .welcome h3{font-size:17px;line-height:1.25;color:#f3f9ff;margin:0 0 7px;font-weight:700}
+    .welcome p{font-size:12px;line-height:1.5;color:#a9c2d8;margin:0 0 13px}
+    .cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+    .cats button{min-width:0;text-align:left;border:1px solid #2a5875;background:#102b45;color:#d9f4ff;border-radius:12px;padding:9px 10px;font-size:11px;font-weight:650;cursor:pointer}
+    .cats button:hover,.cats button:focus-visible{border-color:#48d5f4;background:#16405e;color:#fff}
+    .cats button span{display:block;color:#6fdcf5;font-size:9px;font-weight:500;margin-top:3px}
+    .cat-title{font-size:11px;color:#9fc1d9;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin:3px 0 0}
+    .g{white-space:pre-wrap;overflow-wrap:anywhere}
+    .a{line-height:1.65}
+    @media(max-width:360px){.cats{grid-template-columns:1fr}.welcome{padding:12px}}
     .ac button{color:#c6e5f6;border-radius:10px;font-size:16px}
     .ac button:hover{background:#ffffff16;color:#fff}
     .m{background:radial-gradient(ellipse at 15% 0%,#12304b 0%,#0c1b2d 42%,#091525 100%);padding:17px 15px;gap:11px}
@@ -141,7 +156,7 @@
 </style>" +
     '<button class="b n" aria-expanded="false">' + ROBOT + '</button>' +
     '<div class="tip" role="status"><span id="tt"></span><button id="tx" aria-label="Cerrar sugerencia">✕</button></div>' +
-    '<div class="p" role="dialog"><div class="h"><div class="av">' + ROBOT + '</div><div class="ti"><b id="nom"></b><small><i></i>Asistente de la carrera</small></div><span class="ac">' +
+    '<div class="p" role="dialog"><div class="h"><div class="av">' + ROBOT + '</div><div class="ti"><b id="nom"></b><small class="presence" id="presencia"><i></i><span id="textoEstado">Conectando…</span></small></div><span class="ac">' +
     '<button id="snd" aria-label="Sonidos del chat">🔔</button>' +
     '<button id="v" title="Leer respuestas en voz alta" aria-label="Leer respuestas en voz alta" aria-pressed="false">🗣</button>' +
     '<button id="r" title="Nueva conversación" aria-label="Nueva conversación">↺</button>' +
@@ -158,6 +173,14 @@
   bub.setAttribute("aria-label", "Abrir chat con " + nombre);
   if (leer("chatbot_visto")) bub.classList.remove("n");
   function estado(t) { st.textContent = t || ""; }
+  function estadoAsistente(tipo, texto) {
+    var p = $("#presencia"), etiqueta = $("#textoEstado");
+    if (!p || !etiqueta) return;
+    p.classList.remove("busy", "warn");
+    if (tipo === "busy") p.classList.add("busy");
+    if (tipo === "warn") p.classList.add("warn");
+    etiqueta.textContent = texto;
+  }
 
   // ---- Sonidos (generados con Web Audio, sin archivos) ----
   var AC = null, sonidoOn = leer("chatbot_sonido") !== "0";
@@ -235,16 +258,49 @@
   function sugerencias(n) { // las FAQ con "s" se ofrecen en orden; menor número = antes
     return FAQ.filter(function (f) { return f.s && !preguntadas[f.i]; }).sort(function (a, b) { return a.s - b.s; }).slice(0, n || 3);
   }
+  var CATEGORIAS = [
+    { nombre: "Ingreso", detalle: "Requisitos y conocimientos", match: /requisit|conocimientos previos|equivalencia/i },
+    { nombre: "Materias", detalle: "Plan de estudios y contenidos", match: /materias|matematica|lenguajes|programacion|inteligencia artificial|machine learning|edi|correlatividades|aprueban/i },
+    { nombre: "Inscripciones", detalle: "Fechas, costos y becas", match: /inscrip|cuesta la carrera|becas|beneficios/i },
+    { nombre: "Carrera", detalle: "Duración, título y salida laboral", match: /cuanto dura|titulo otorga|donde se dicta|horario|presencial|salida laboral|que hace un tecnico|proyecto final|practicas profesionalizantes/i },
+    { nombre: "Vida institucional", detalle: "Servicios y autoridades", match: /secretaria|coordinador|infraestructura|centro de estudiantes|pasantias|tutorias/i }
+  ];
+  function mostrarCategoria(cat) {
+    quitarChips();
+    var titulo = document.createElement("div"); titulo.className = "cat-title"; titulo.textContent = "Consultas sobre " + cat.nombre;
+    msgs.appendChild(titulo);
+    var lista = FAQ.filter(function (f) { return cat.match.test(f.q + " " + (f.kw || "")); }).slice(0, 7);
+    if (!lista.length) { agregar("Todavía estoy organizando las consultas de esta categoría. Podés escribir tu pregunta directamente.", "a"); return; }
+    chips(lista); msgs.scrollTop = msgs.scrollHeight;
+  }
   function bienvenida() {
-    agregar("¡Hola! Soy " + nombre + " 👋, tu asistente académico de Ciencia de Datos e Inteligencia Artificial. ¿Qué necesitás saber hoy?", "a");
-    agregar("Mis respuestas son orientativas: para trámites consultá en el IES N° 6. Las preguntas que no sé responder se guardan sin datos personales para mejorar.", "nt");
-    chips(sugerencias(4));
+    var card = document.createElement("section"); card.className = "welcome"; card.setAttribute("aria-label", "Bienvenida de Andresito");
+    var eyebrow = document.createElement("div"); eyebrow.className = "eyebrow"; eyebrow.textContent = "Asistente académico · IES N.º 6";
+    var titulo = document.createElement("h3"); titulo.textContent = "¡Hola! Soy " + nombre + ".";
+    var texto = document.createElement("p"); texto.textContent = "Estoy para ayudarte con la Tecnicatura en Ciencia de Datos e Inteligencia Artificial. Elegí un tema o escribime tu consulta.";
+    var botones = document.createElement("div"); botones.className = "cats";
+    CATEGORIAS.forEach(function (cat) {
+      var b = document.createElement("button"); b.type = "button"; b.textContent = cat.nombre;
+      var sub = document.createElement("span"); sub.textContent = cat.detalle; b.appendChild(sub);
+      b.setAttribute("aria-label", cat.nombre + ": " + cat.detalle); b.onclick = function () { mostrarCategoria(cat); };
+      botones.appendChild(b);
+    });
+    card.appendChild(eyebrow); card.appendChild(titulo); card.appendChild(texto); card.appendChild(botones);
+    msgs.appendChild(card);
+    agregar("Mis respuestas son orientativas. Para confirmar trámites, fechas o documentación, consultá también en el IES N.º 6.", "nt");
+    msgs.scrollTop = msgs.scrollHeight;
   }
   bienvenida();
   estadoAsistente("busy", "Conectando…");
-  fetch(faqUrl, { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; }).then(function (l) {
-    prepararFAQ(Array.isArray(l) ? l : []);
-    if (!msgs.querySelector(".u")) chips(sugerencias(4)); // sigue sin preguntas: ofrece las sugeridas
+  fetch(faqUrl, { cache: "no-cache" }).then(function (r) {
+    if (!r.ok) throw new Error("No se pudo cargar la base de preguntas.");
+    return r.json();
+  }).then(function (l) {
+    if (!Array.isArray(l)) throw new Error("Formato de preguntas inválido.");
+    prepararFAQ(l); estadoAsistente("ok", "Disponible");
+  }).catch(function () {
+    prepararFAQ([]); estadoAsistente("warn", "Conectividad limitada");
+    estado("No pude cargar las preguntas frecuentes. Podés escribir tu consulta igualmente.");
   });
 
   function responder(el, txt, guardarHist, sonido) {
@@ -268,6 +324,7 @@
       historial.push({ role: "user", content: t });
       var el = escribiendo();
       if (hit) {
+        estadoAsistente("ok", "Disponible");
         await pausa(300);
         preguntadas[hit.i] = 1;
         responder(el, hit.a, true);
@@ -275,14 +332,20 @@
         chips(sugerencias());
         return;
       }
-      try { // sin coincidencia local: respaldo con modelo gratuito
+      try {
+        estadoAsistente("busy", "Consultando IA…");
         var r = await fetch(api, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: historial.slice(-6) }) });
         var d = await r.json();
-        if (!d.reply) { var err = new Error(d.error); err.limite = r.status === 429; throw err; }
-        responder(el, d.reply, true);
+        if (!d.reply) { var err = new Error(d.error || "El servicio no pudo generar una respuesta."); err.status = r.status; err.detalle = d.error || ""; throw err; }
+        responder(el, d.reply, true); estadoAsistente("ok", "Disponible");
       } catch (e) {
         historial.pop();
-        responder(el, e && e.limite ? e.message : "No tengo ese dato. Probá con alguna de estas preguntas o consultá en la secretaría del IES N° 6 de Perico.", false, "error");
+        var mensaje = "No pude completar la consulta. Probá nuevamente en unos minutos.";
+        if (e && e.status === 429) mensaje = e.detalle || "Alcanzaste el límite de consultas por ahora. Intentá más tarde.";
+        else if (e && e.status === 503) mensaje = "El asistente con IA no está configurado. Podés usar las preguntas frecuentes o consultar en el IES.";
+        else if (e && e.status === 502) mensaje = "El servicio de IA no está respondiendo. Las preguntas frecuentes siguen disponibles.";
+        else if (e && e.name === "TypeError") mensaje = "No pude conectar con el servidor. Revisá tu conexión a Internet e intentá nuevamente.";
+        responder(el, mensaje, false, "error"); estadoAsistente("warn", "Servicio limitado");
       }
       chips(sugerencias());
     } finally { ocupado = false; }
@@ -394,7 +457,7 @@
   input.addEventListener("keydown", function (e) { if (e.key === "Enter") enviar(); });
 
   $("#r").onclick = function () {
-    historial = []; preguntadas = {}; msgs.textContent = ""; estado("");
+    historial = []; preguntadas = {}; msgs.textContent = ""; estado(""); estadoAsistente("ok", "Disponible");
     if (window.speechSynthesis) speechSynthesis.cancel();
     sonar("reset"); bienvenida(); input.focus();
   };
