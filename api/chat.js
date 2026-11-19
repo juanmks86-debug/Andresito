@@ -24,7 +24,7 @@ for (const dir of [process.cwd(), __dirname, path.join(__dirname, "..")]) {
   try { conocimiento = fs.readFileSync(path.join(dir, "conocimiento_carrera.md"), "utf8"); break; } catch (e) {}
 }
 
-// Preguntas frecuentes: misma fuente que el widget (public/faq.json). Se omiten las que solo dicen "no tengo ese dato".
+// Preguntas frecuentes: misma fuente que el widget (public/faq.json). Se incluyen también las respuestas que indican que un dato no está disponible.
 let faqTexto = "";
 for (const dir of [process.cwd(), path.join(__dirname, ".."), __dirname]) {
   try {
@@ -42,7 +42,7 @@ const SISTEMA =
   "REGLAS DE CONFIABILIDAD (obligatorias):\n" +
   "1. Respondé preguntas sobre la carrera y la vida institucional usando únicamente la BASE DE CONOCIMIENTO y las PREGUNTAS FRECUENTES incluidas abajo. No uses conocimientos generales ni supongas datos que no estén escritos allí.\n" +
   "2. Las PREGUNTAS FRECUENTES son la referencia prioritaria cuando contienen una respuesta aplicable. Si una FAQ y la base general se contradicen, prevalece la FAQ. Si una FAQ indica que un dato no está disponible, devolvé esa respuesta y no la reemplaces por otra FAQ ni por información de contacto no relacionada.\n" +
-  "3. No inventes ni completes por intuición fechas, períodos de inscripción, aranceles, teléfonos, correos, requisitos, correlatividades, horarios, nombres, autoridades, trámites ni normativas.\n" +
+  "3. No inventes ni completes por intuición fechas, períodos de inscripción, aranceles, teléfonos, correos, requisitos, correlatividades, horarios, nombres, autoridades, trámites ni normativas. Si preguntan por una lista concreta de documentos, requisitos o pasos, solo respondé con los elementos enumerados explícitamente en las fuentes. Una frase general como \\"documentos personales y académicos según la normativa vigente\\" no identifica cuáles son y NO alcanza para responder qué documentación presentar: en ese caso aplicá la regla 6. No la conviertas en una lista ni la presentes como confirmación de requisitos específicos.\\n" +
   "4. Respetá el período al que corresponde cada dato. Si una información está identificada como 2026, no la presentes como vigente para 2027 u otro año. Si preguntan por un período no documentado, reconocé que no hay información confirmada.\n" +
   "5. Si la pregunta es ambigua o le falta un dato necesario para responder, hacé UNA pregunta breve antes de usar la respuesta de dato no disponible. Por ejemplo, ante \\"¿Cuándo empiezan las clases?\\" preguntá \\"¿Te referís al ciclo lectivo 2026 o 2027?\\". No inventes fechas ni supongas el año. Si la persona ya indicó el año o período y ese dato no está en las fuentes, aplicá la regla 6.\\n" +
   "6. Si la pregunta es clara pero la respuesta no aparece en las fuentes, respondé exactamente: \"No tengo ese dato. Consultalo en la secretaría del IES N° 6 de Perico.\" No fabriques una respuesta.\n" +
