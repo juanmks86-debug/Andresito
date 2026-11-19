@@ -216,12 +216,17 @@
   },
   {
     "q": "¿Qué servicios ofrece la biblioteca del instituto?",
-    "kw": "servicios ofrece biblioteca instituto biblioteca institucional netbooks préstamo libros",
+    "kw": "biblioteca biblioteca institucional netbooks préstamo libros",
     "a": "El instituto cuenta con una biblioteca institucional. Además, se pueden solicitar netbooks para usar dentro de las horas de clase. Para consultar otros servicios o las condiciones de préstamo, acercate al IES N° 6 de Perico."
   },
   {
     "q": "¿El instituto cuenta con conexión a Internet?",
     "kw": "internet conexión conectividad wifi wi-fi starlink red internet instituto",
     "a": "Sí. El instituto cuenta con conexión a Internet mediante una red Starlink."
+  },
+  {
+    "q": "¿El instituto cuenta con servicio de fotocopiadora?",
+    "kw": "fotocopiadora fotocopiadoras fotocopia fotocopias",
+    "a": "Sí. El instituto cuenta con servicio de fotocopiadora."
   }
 ]
