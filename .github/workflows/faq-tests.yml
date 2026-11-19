@@ -6,18 +6,24 @@ on:
     paths:
       - "public/faq.json"
       - "public/widget.js"
+      - "api/chat.js"
+      - "conocimiento_carrera.md"
       - "tests/**"
+      - "README.md"
       - ".github/workflows/faq-tests.yml"
   pull_request:
     paths:
       - "public/faq.json"
       - "public/widget.js"
+      - "api/chat.js"
+      - "conocimiento_carrera.md"
       - "tests/**"
+      - "README.md"
       - ".github/workflows/faq-tests.yml"
 
 jobs:
   faq-tests:
-    name: Validar preguntas frecuentes
+    name: Validar FAQ, widget y backend
     runs-on: ubuntu-latest
     steps:
       - name: Descargar repositorio
