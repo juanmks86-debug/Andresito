@@ -7,7 +7,11 @@
   var izq = script.dataset.posicion === "izquierda";
   var icono = script.dataset.icono || ""; // URL opcional de una imagen para el ícono de la burbuja
   var nombre = script.dataset.nombre || "Andresito";
-  var origen = new URL(script.src).origin;
+  var scriptUrl = new URL(script.src);
+  var origen = scriptUrl.origin;
+  // Modo de prueba visual: agregar ?avatarTest=AAAA-MM-DD a la URL del widget.
+  var fechaPruebaAvatar = scriptUrl.searchParams.get("avatarTest");
+  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(fechaPruebaAvatar || "")) fechaPruebaAvatar = null;
   var api = script.dataset.api || origen + "/api/chat";
   var faqUrl = script.dataset.faq || origen + "/faq.json";
   var historial = [], vozActiva = false, preguntadas = {}, rec = null, ocupado = false, FAQ = [];
@@ -63,9 +67,16 @@
   // ---- Interfaz ----
   var ROBOT = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M12 8V5"/><circle cx="12" cy="4" r="1" fill="#fff"/><circle cx="9" cy="13" r="1.2" fill="#fff" stroke="none"/><circle cx="15" cy="13" r="1.2" fill="#fff" stroke="none"/><path d="M9.5 16.2c1.5 1 3.5 1 5 0"/><path d="M2 12v3M22 12v3"/></svg>';
   // Colección de imágenes individuales según la fecha local del dispositivo.
-  function temporadaAvatar() {
+  function fechaLocalAvatar() {
+    if (fechaPruebaAvatar) {
+      var partes = fechaPruebaAvatar.split("-");
+      return Number(partes[0]) * 10000 + Number(partes[1]) * 100 + Number(partes[2]);
+    }
     var ahora = new Date();
-    var fecha = ahora.getFullYear() * 10000 + (ahora.getMonth() + 1) * 100 + ahora.getDate();
+    return ahora.getFullYear() * 10000 + (ahora.getMonth() + 1) * 100 + ahora.getDate();
+  }
+  function temporadaAvatar(fecha) {
+    fecha = fecha || fechaLocalAvatar();
     if (fecha >= 20261118 && fecha <= 20261224) return "graduacion";
     if (fecha >= 20261225 && fecha <= 20270114) return "navidad";
     if (fecha >= 20270115 && fecha <= 20270326) return "verano";
@@ -74,9 +85,7 @@
   var temporadaActual = temporadaAvatar();
   function urlExpresionAvatar(estado) {
     var expresion = estado === "speaking" ? "answering" : estado;
-    var ruta = "/avatars/" + temporadaActual + "/" + expresion + ".jpg";
-    if (temporadaActual === "verano") ruta = "/avatars/normal/" + expresion + ".jpg";
-    return origen + ruta;
+    return origen + "/avatars/" + temporadaActual + "/" + expresion + ".jpg";
   }
   var avatarUrl = urlExpresionAvatar("idle");
   var avatarMoodTimer = null;
@@ -139,6 +148,17 @@
         cambiarExpresionAvatar("idle");
       }, duracion);
     }
+  }
+  // Revisa el cambio de día sin exigir que el usuario recargue la página.
+  if (!fechaPruebaAvatar) {
+    setInterval(function () {
+      var nuevaTemporada = temporadaAvatar();
+      if (nuevaTemporada === temporadaActual) return;
+      temporadaActual = nuevaTemporada;
+      avatarPreloads = Object.create(null);
+      avatarUrl = urlExpresionAvatar(avatarMood);
+      cambiarExpresionAvatar(avatarMood);
+    }, 60000);
   }
   var host = document.createElement("div");
   document.body.appendChild(host);
