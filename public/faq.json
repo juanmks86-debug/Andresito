@@ -202,5 +202,11 @@
     "kw": "horario atención atiende secretaria secretaría administrativa abrir abierta horarios oficina",
     "a": "No tengo ese dato. Consultalo en la secretaría del IES N° 6 de Perico.",
     "sd": 1
+  },
+  {
+    "q": "¿Quién es el director del IES N° 6?",
+    "kw": "director directora directivo directiva rector rectora autoridad institucional máxima autoridad",
+    "a": "No tengo ese dato. Consultalo en la secretaría del IES N° 6 de Perico.",
+    "sd": 1
   }
 ]
