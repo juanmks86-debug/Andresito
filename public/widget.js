@@ -81,19 +81,64 @@
   var avatarUrl = urlExpresionAvatar("idle");
   var avatarMoodTimer = null;
   var avatarMood = "idle";
+  var avatarPreloads = Object.create(null);
+  function precargarAvatar(url, listo, error) {
+    if (avatarPreloads[url] === "ready") { listo(); return; }
+    if (avatarPreloads[url] === "failed") { error(); return; }
+    if (avatarPreloads[url] && avatarPreloads[url].push) {
+      avatarPreloads[url].push({ listo: listo, error: error });
+      return;
+    }
+    avatarPreloads[url] = [{ listo: listo, error: error }];
+    var imagen = new Image();
+    imagen.onload = function () {
+      var callbacks = avatarPreloads[url];
+      avatarPreloads[url] = "ready";
+      callbacks.forEach(function (cb) { cb.listo(); });
+    };
+    imagen.onerror = function () {
+      var callbacks = avatarPreloads[url];
+      avatarPreloads[url] = "failed";
+      callbacks.forEach(function (cb) { cb.error(); });
+    };
+    imagen.src = url;
+  }
   function cambiarExpresionAvatar(estado) {
     avatarMood = estado;
     var url = urlExpresionAvatar(estado);
     [root.querySelector(".av img"), !icono && bub && bub.querySelector("img")].forEach(function (img) {
-      if (img && img.src !== url) img.src = url;
+      if (!img || img.src === url) return;
+      img.style.opacity = "0.35";
+      precargarAvatar(url, function () {
+        if (avatarMood !== estado) return;
+        img.src = url;
+        requestAnimationFrame(function () { img.style.opacity = "1"; });
+      }, function () {
+        if (avatarMood !== estado) return;
+        var alternativa = origen + "/avatars/normal/" + (estado === "speaking" ? "answering" : estado) + ".jpg";
+        if (url !== alternativa) {
+          precargarAvatar(alternativa, function () {
+            if (avatarMood !== estado) return;
+            img.src = alternativa;
+            requestAnimationFrame(function () { img.style.opacity = "1"; });
+          }, function () { if (avatarMood === estado) img.style.opacity = "1"; });
+        } else {
+          img.style.opacity = "1";
+        }
+      });
     });
   }
   function programarExpresion(estado, duracion) {
     clearTimeout(avatarMoodTimer);
+    avatarMoodTimer = null;
     cambiarExpresionAvatar(estado);
-    if (duracion) avatarMoodTimer = setTimeout(function () {
-      cambiarExpresionAvatar("idle");
-    }, duracion);
+    // Sin duración, el estado se mantiene hasta que otra fase lo reemplace.
+    if (typeof duracion === "number" && duracion > 0) {
+      avatarMoodTimer = setTimeout(function () {
+        avatarMoodTimer = null;
+        cambiarExpresionAvatar("idle");
+      }, duracion);
+    }
   }
   var host = document.createElement("div");
   document.body.appendChild(host);
@@ -104,7 +149,7 @@
     ".b{position:fixed;left:0;top:0;width:58px;height:58px;border-radius:50%;overflow:hidden;border:0;padding:0;background:linear-gradient(145deg," + color + ",#111a 140%);background-color:" + color + ";color:#fff;cursor:grab;box-shadow:0 6px 16px #0004;z-index:2147483647;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;transition:transform .15s}" +
     ".b.s{transition:left .25s ease,top .25s ease,transform .15s}.b:hover{transform:scale(1.07)}.b.d{cursor:grabbing;transform:scale(1.12);box-shadow:0 10px 24px #0006}.b.oc{display:none}" +
     ".b.n::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid " + color + ";animation:ring 1.8s ease-out infinite;pointer-events:none}@keyframes ring{0%{transform:scale(.9);opacity:.8}100%{transform:scale(1.35);opacity:0}}" +
-    ".b svg{width:30px;height:30px;pointer-events:none}.b img{position:absolute;width:100%;height:100%;max-width:none;left:0;top:0;object-fit:cover;border-radius:inherit;pointer-events:none}" +
+    ".b svg{width:30px;height:30px;pointer-events:none}.b img{position:absolute;width:100%;height:100%;max-width:none;left:0;top:0;object-fit:cover;border-radius:inherit;opacity:1;transition:opacity .18s ease;pointer-events:none}" +
     ".tip{position:fixed;left:0;top:0;background:#fff;color:#111;border-radius:14px;box-shadow:0 6px 22px #0004;padding:10px 30px 10px 12px;font-size:13px;line-height:1.35;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .25s,transform .25s;z-index:2147483646}" +
     ".tip.v{opacity:1;pointer-events:auto;transform:none}.tip button{position:absolute;top:2px;right:4px;border:0;background:none;color:#777;font-size:14px;cursor:pointer;padding:4px}" +
     ".p{position:fixed;left:0;top:0;background:#fff;color:#111;border-radius:16px;box-shadow:0 10px 36px #0006;display:none;flex-direction:column;overflow:hidden;z-index:2147483647}.p.o{display:flex;animation:ent .22s ease-out}@keyframes ent{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}" +
@@ -134,7 +179,7 @@
 .tip button{color:#a9c4dc}
 .p{background:#0a1728;color:#eaf4ff;border:1px solid #24415e;border-radius:24px;box-shadow:0 24px 80px #000a,0 0 0 1px #50dfff12;overflow:hidden}
 .h{background:linear-gradient(125deg,#123b5a 0%,#10243d 52%,#0b192c 100%);padding:15px 15px;border-bottom:1px solid #244763}
-.av{position:relative;width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044;overflow:hidden;border-radius:50%}.av img{position:absolute;width:100%;height:100%;max-width:none;left:0;top:0;object-fit:cover;display:block;border-radius:inherit}
+.av{position:relative;width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044;overflow:hidden;border-radius:50%}.av img{position:absolute;width:100%;height:100%;max-width:none;left:0;top:0;object-fit:cover;display:block;border-radius:inherit;opacity:1;transition:opacity .18s ease}
 .av svg{width:27px;height:27px}
 .ti b{font-size:16px;letter-spacing:.2px;color:#f2f9ff}
 .ti small{font-size:10px;letter-spacing:.35px;color:#a7c3d9}
@@ -365,7 +410,8 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
   });
 
   function responder(el, txt, guardarHist, sonido) {
-    programarExpresion("speaking", 2200);
+    var duracionRespuesta = Math.max(2400, Math.min(6500, txt.length * 22));
+    programarExpresion("speaking", duracionRespuesta);
     el.className = "g a"; el.removeAttribute("role"); el.removeAttribute("aria-label");
     contenido(el, txt);
     if (guardarHist) historial.push({ role: "assistant", content: txt });
@@ -378,7 +424,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
     var t = input.value.trim();
     if (!t || ocupado) return;
     ocupado = true;
-    programarExpresion("thinking", 2200);
+    programarExpresion("thinking");
     input.value = ""; quitarChips(); agregar(t, "u"); sonar("enviar");
     try {
       var sal = charla(t);
