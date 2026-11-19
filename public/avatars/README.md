@@ -11,12 +11,12 @@ Subí aquí los recortes individuales de cada expresión. No subas las plantilla
 
 En cada carpeta, los archivos deben llamarse exactamente:
 
-- idle.png — esperando
-- thinking.png — pensando
-- processing.png — procesando
-- answering.png — respondiendo
-- error.png — error
-- offline.png — sin conexión
+- idle.jpg — esperando
+- thinking.jpg — pensando
+- processing.jpg — procesando
+- answering.jpg — respondiendo
+- error.jpg — error
+- offline.jpg — sin conexión
 
 Preferentemente PNG con fondo transparente. Mantené el mismo tamaño y encuadre en todos los recortes de una temporada.
 
