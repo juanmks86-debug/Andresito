@@ -52,7 +52,7 @@
  {
   "q": "¿Qué requisitos de ingreso hay?",
   "kw": "requisitos ingreso ingresar condiciones secundario medio polimodal",
-  "a": "Para ingresar se requiere título de nivel medio o polimodal. Las personas mayores de 25 años sin secundario terminado pueden acogerse a la Resolución 114-SE-02 de Jujuy. La documentación específica que debe presentarse no está detallada en la información disponible; consultá el listado actualizado en la secretaría del IES N° 6 de Perico.",
+  "a": "Como condición de ingreso, se requiere título de nivel medio o polimodal. Las personas mayores de 25 años sin secundario terminado pueden acogerse a la Resolución 114-SE-02 de Jujuy. Esta información no detalla la documentación que debe presentarse.",
   "s": 4
  },
  {
@@ -60,6 +60,12 @@
   "a": "La inscripción se hace en línea desde nexo.jujuy.edu.ar. Las fechas del período no las tengo cargadas: consultalas en la página oficial del instituto (ifdc6m-juj.infd.edu.ar) o en la secretaría del IES N° 6 de Perico. Para ingresar necesitás título de nivel medio (los mayores de 25 años tienen otra vía) y en 2026 se tomó un examen parcial de ingreso.",
   "kw": "inscripcion inscribir inscribirme inscribo anotar anotarme preinscripcion fechas abre abren cuando",
   "s": 6,
+  "sd": 1
+ },
+ {
+  "q": "¿Qué documentación necesito presentar para inscribirme en la carrera?",
+  "kw": "documentación documentos presentar papeles dni certificado notas inscripción inscribirme requisitos papeles necesarios",
+  "a": "No tengo ese dato. Consultalo en la secretaría del IES N° 6 de Perico.",
   "sd": 1
  },
  {
