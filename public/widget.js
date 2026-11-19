@@ -414,11 +414,12 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
         else if (e && e.status === 503) mensaje = "El asistente con IA no está configurado. Podés usar las preguntas frecuentes o consultar en el IES.";
         else if (e && e.status === 502) mensaje = "El servicio de IA no está respondiendo. Las preguntas frecuentes siguen disponibles.";
         else if (e && e.name === "TypeError") mensaje = "No pude conectar con el servidor. Revisá tu conexión a Internet e intentá nuevamente.";
+        responder(el, mensaje, false, "error");
         programarExpresion("error", 3500);
-        responder(el, mensaje, false, "error"); estadoAsistente("warn", "Servicio limitado");
+        estadoAsistente("warn", "Servicio limitado");
       }
       chips(sugerencias());
-    } finally { ocupado = false; clearTimeout(avatarMoodTimer); if (avatarMood !== "error") programarExpresion("idle", 0); }
+    } finally { ocupado = false; if (avatarMood !== "error" && avatarMood !== "speaking") programarExpresion("idle", 0); }
   }
 
   function hablar(txt) {
