@@ -62,16 +62,49 @@
 
   // ---- Interfaz ----
   var ROBOT = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M12 8V5"/><circle cx="12" cy="4" r="1" fill="#fff"/><circle cx="9" cy="13" r="1.2" fill="#fff" stroke="none"/><circle cx="15" cy="13" r="1.2" fill="#fff" stroke="none"/><path d="M9.5 16.2c1.5 1 3.5 1 5 0"/><path d="M2 12v3M22 12v3"/></svg>';
+  // Colección de imágenes individuales según la fecha local del dispositivo.
+  function temporadaAvatar() {
+    var ahora = new Date();
+    var fecha = ahora.getFullYear() * 10000 + (ahora.getMonth() + 1) * 100 + ahora.getDate();
+    if (fecha >= 20261118 && fecha <= 20261224) return "graduacion";
+    if (fecha >= 20261225 && fecha <= 20270114) return "navidad";
+    if (fecha >= 20270115 && fecha <= 20270326) return "verano";
+    return "normal";
+  }
+  var temporadaActual = temporadaAvatar();
+  function urlExpresionAvatar(estado) {
+    var expresion = estado === "speaking" ? "answering" : estado;
+    var ruta = "/avatars/" + temporadaActual + "/" + expresion + ".jpg";
+    if (temporadaActual === "verano") ruta = "/avatars/normal/" + expresion + ".jpg";
+    return origen + ruta;
+  }
+  var avatarUrl = urlExpresionAvatar("idle");
+  var avatarMoodTimer = null;
+  var avatarMood = "idle";
+  function cambiarExpresionAvatar(estado) {
+    avatarMood = estado;
+    var url = urlExpresionAvatar(estado);
+    [root.querySelector(".av img"), !icono && bub && bub.querySelector("img")].forEach(function (img) {
+      if (img && img.src !== url) img.src = url;
+    });
+  }
+  function programarExpresion(estado, duracion) {
+    clearTimeout(avatarMoodTimer);
+    cambiarExpresionAvatar(estado);
+    if (duracion) avatarMoodTimer = setTimeout(function () {
+      cambiarExpresionAvatar("idle");
+    }, duracion);
+  }
   var host = document.createElement("div");
   document.body.appendChild(host);
   var root = host.attachShadow({ mode: "open" });
   root.innerHTML =
     "<style>:host{all:initial}*{box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',sans-serif}" +
     "button:focus-visible,input:focus-visible{outline:2px solid #ffb300;outline-offset:2px}" +
-    ".b{position:fixed;left:0;top:0;width:58px;height:58px;border-radius:50%;border:0;padding:0;background:linear-gradient(145deg," + color + ",#111a 140%);background-color:" + color + ";color:#fff;cursor:grab;box-shadow:0 6px 16px #0004;z-index:2147483647;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;transition:transform .15s}" +
+    ".b{position:fixed;left:0;top:0;width:58px;height:58px;border-radius:50%;overflow:hidden;border:0;padding:0;background:linear-gradient(145deg," + color + ",#111a 140%);background-color:" + color + ";color:#fff;cursor:grab;box-shadow:0 6px 16px #0004;z-index:2147483647;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;transition:transform .15s}" +
     ".b.s{transition:left .25s ease,top .25s ease,transform .15s}.b:hover{transform:scale(1.07)}.b.d{cursor:grabbing;transform:scale(1.12);box-shadow:0 10px 24px #0006}.b.oc{display:none}" +
     ".b.n::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid " + color + ";animation:ring 1.8s ease-out infinite;pointer-events:none}@keyframes ring{0%{transform:scale(.9);opacity:.8}100%{transform:scale(1.35);opacity:0}}" +
-    ".b svg{width:30px;height:30px;pointer-events:none}.b img{width:100%;height:100%;border-radius:50%;object-fit:cover;pointer-events:none}" +
+    ".b svg{width:30px;height:30px;pointer-events:none}.b img{position:absolute;width:100%;height:100%;max-width:none;left:0;top:0;object-fit:cover;border-radius:inherit;pointer-events:none}" +
     ".tip{position:fixed;left:0;top:0;background:#fff;color:#111;border-radius:14px;box-shadow:0 6px 22px #0004;padding:10px 30px 10px 12px;font-size:13px;line-height:1.35;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .25s,transform .25s;z-index:2147483646}" +
     ".tip.v{opacity:1;pointer-events:auto;transform:none}.tip button{position:absolute;top:2px;right:4px;border:0;background:none;color:#777;font-size:14px;cursor:pointer;padding:4px}" +
     ".p{position:fixed;left:0;top:0;background:#fff;color:#111;border-radius:16px;box-shadow:0 10px 36px #0006;display:none;flex-direction:column;overflow:hidden;z-index:2147483647}.p.o{display:flex;animation:ent .22s ease-out}@keyframes ent{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}" +
@@ -101,7 +134,7 @@
 .tip button{color:#a9c4dc}
 .p{background:#0a1728;color:#eaf4ff;border:1px solid #24415e;border-radius:24px;box-shadow:0 24px 80px #000a,0 0 0 1px #50dfff12;overflow:hidden}
 .h{background:linear-gradient(125deg,#123b5a 0%,#10243d 52%,#0b192c 100%);padding:15px 15px;border-bottom:1px solid #244763}
-.av{width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044}
+.av{position:relative;width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044;overflow:hidden;border-radius:50%}.av img{position:absolute;width:100%;height:100%;max-width:none;left:0;top:0;object-fit:cover;display:block;border-radius:inherit}
 .av svg{width:27px;height:27px}
 .ti b{font-size:16px;letter-spacing:.2px;color:#f2f9ff}
 .ti small{font-size:10px;letter-spacing:.35px;color:#a7c3d9}
@@ -167,7 +200,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
 </style>` +
     '<button class="b n" aria-expanded="false">' + ROBOT + '</button>' +
     '<div class="tip" role="status"><span id="tt"></span><button id="tx" aria-label="Cerrar sugerencia">✕</button></div>' +
-    '<div class="p" role="dialog"><div class="h"><div class="av">' + ROBOT + '</div><div class="ti"><b id="nom"></b><small class="presence" id="presencia"><i></i><span id="textoEstado">Conectando…</span></small></div><span class="ac">' +
+    '<div class="p" role="dialog"><div class="h"><div class="av"><img src="' + avatarUrl + '" alt="Avatar de Andresito"></div><div class="ti"><b id="nom"></b><small class="presence" id="presencia"><i></i><span id="textoEstado">Conectando…</span></small></div><span class="ac">' +
     '<button id="snd" aria-label="Sonidos del chat">🔔</button>' +
     '<button id="v" title="Leer respuestas en voz alta" aria-label="Leer respuestas en voz alta" aria-pressed="false">🗣</button>' +
     '<button id="r" title="Nueva conversación" aria-label="Nueva conversación">↺</button>' +
@@ -184,6 +217,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
   bub.setAttribute("aria-label", "Abrir chat con " + nombre);
   if (leer("chatbot_visto")) bub.classList.remove("n");
   function estado(t) { st.textContent = t || ""; }
+  cambiarExpresionAvatar("idle");
   function estadoAsistente(tipo, texto) {
     var p = $("#presencia"), etiqueta = $("#textoEstado");
     if (!p || !etiqueta) return;
@@ -331,6 +365,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
   });
 
   function responder(el, txt, guardarHist, sonido) {
+    programarExpresion("speaking", 2200);
     el.className = "g a"; el.removeAttribute("role"); el.removeAttribute("aria-label");
     contenido(el, txt);
     if (guardarHist) historial.push({ role: "assistant", content: txt });
@@ -343,10 +378,11 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
     var t = input.value.trim();
     if (!t || ocupado) return;
     ocupado = true;
+    programarExpresion("thinking", 2200);
     input.value = ""; quitarChips(); agregar(t, "u"); sonar("enviar");
     try {
       var sal = charla(t);
-      if (sal) { var e0 = agregar(sal, "a"); sonar("recibir"); hablar(sal); chips(sugerencias()); return; }
+      if (sal) { var e0 = agregar(sal, "a"); programarExpresion("speaking", 2200); sonar("recibir"); hablar(sal); chips(sugerencias()); return; }
       var hit = buscar(t);
       historial.push({ role: "user", content: t });
       var el = escribiendo();
@@ -361,6 +397,8 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
       }
       try {
         estadoAsistente("busy", "Consultando IA…");
+        clearTimeout(avatarMoodTimer);
+        cambiarExpresionAvatar("processing");
         var r = await fetch(api, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: historial.slice(-6) }) });
         var d = await r.json();
         if (!d.reply) { var err = new Error(d.error || "El servicio no pudo generar una respuesta."); err.status = r.status; err.detalle = d.error || ""; throw err; }
@@ -372,10 +410,12 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
         else if (e && e.status === 503) mensaje = "El asistente con IA no está configurado. Podés usar las preguntas frecuentes o consultar en el IES.";
         else if (e && e.status === 502) mensaje = "El servicio de IA no está respondiendo. Las preguntas frecuentes siguen disponibles.";
         else if (e && e.name === "TypeError") mensaje = "No pude conectar con el servidor. Revisá tu conexión a Internet e intentá nuevamente.";
-        responder(el, mensaje, false, "error"); estadoAsistente("warn", "Servicio limitado");
+        responder(el, mensaje, false, "error");
+        programarExpresion("error", 3500);
+        estadoAsistente("warn", "Servicio limitado");
       }
       chips(sugerencias());
-    } finally { ocupado = false; }
+    } finally { ocupado = false; if (avatarMood !== "error" && avatarMood !== "speaking") programarExpresion("idle", 0); }
   }
 
   function hablar(txt) {
@@ -386,7 +426,8 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
 
   // ---- Burbuja arrastrable (se pega al borde más cercano y recuerda su posición) ----
   var TAM = 64, M = 20, drag = null, arrastro = false;
-  if (icono) { var im = document.createElement("img"); im.alt = ""; im.src = icono; bub.textContent = ""; bub.appendChild(im); }
+  var iconoFinal = icono || avatarUrl;
+  if (iconoFinal) { var im = document.createElement("img"); im.alt = ""; im.src = iconoFinal; bub.textContent = ""; bub.appendChild(im); if (!icono) cambiarExpresionAvatar("idle"); }
   function limitar(n, a, b) { return Math.max(a, Math.min(b, n)); }
   function movil() { return window.innerWidth <= 520; }
   var pos = { lado: izq ? "l" : "r", y: 1 };
