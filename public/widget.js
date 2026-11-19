@@ -112,7 +112,7 @@
 .tip button{color:#a9c4dc}
 .p{background:#0a1728;color:#eaf4ff;border:1px solid #24415e;border-radius:24px;box-shadow:0 24px 80px #000a,0 0 0 1px #50dfff12;overflow:hidden}
 .h{background:linear-gradient(125deg,#123b5a 0%,#10243d 52%,#0b192c 100%);padding:15px 15px;border-bottom:1px solid #244763}
-.av{width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044;overflow:hidden}.av img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 25%;border-radius:50%}
+.av{position:relative;width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044;overflow:hidden}.av img{position:absolute;width:444%;height:auto;max-width:none;left:-170%;top:-52%;display:block;border-radius:0}
 .av svg{width:27px;height:27px}
 .ti b{font-size:16px;letter-spacing:.2px;color:#f2f9ff}
 .ti small{font-size:10px;letter-spacing:.35px;color:#a7c3d9}
