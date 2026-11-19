@@ -62,34 +62,30 @@
 
   // ---- Interfaz ----
   var ROBOT = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M12 8V5"/><circle cx="12" cy="4" r="1" fill="#fff"/><circle cx="9" cy="13" r="1.2" fill="#fff" stroke="none"/><circle cx="15" cy="13" r="1.2" fill="#fff" stroke="none"/><path d="M9.5 16.2c1.5 1 3.5 1 5 0"/><path d="M2 12v3M22 12v3"/></svg>';
-  // Avatar estacional según la fecha local del dispositivo; límites inclusivos.
-  function avatarEstacional() {
+  // Colección de imágenes individuales según la fecha local del dispositivo.
+  function temporadaAvatar() {
     var ahora = new Date();
     var fecha = ahora.getFullYear() * 10000 + (ahora.getMonth() + 1) * 100 + ahora.getDate();
-    var archivo = "Plantilla_Normal.jpeg";
-    if (fecha >= 20261118 && fecha <= 20261224) archivo = "Plantilla_Graduacion.jpeg";
-    else if (fecha >= 20261225 && fecha <= 20270114) archivo = "Plantilla_Navidad.jpeg";
-    else if (fecha >= 20270115 && fecha <= 20270326) archivo = "Plantilla_Verano.jpeg";
-    return "https://raw.githubusercontent.com/juanmks86-debug/Andresito/main/" + archivo;
+    if (fecha >= 20261118 && fecha <= 20261224) return "graduacion";
+    if (fecha >= 20261225 && fecha <= 20270114) return "navidad";
+    if (fecha >= 20270115 && fecha <= 20270326) return "verano";
+    return "normal";
   }
-  var avatarUrl = avatarEstacional();
-  // La plantilla se interpreta como una cuadrícula de 3 columnas por 2 filas.
-  // Cada estado selecciona una celda; la imagen estacional no se reemplaza.
+  var temporadaActual = temporadaAvatar();
+  function urlExpresionAvatar(estado) {
+    var expresion = estado === "speaking" ? "answering" : estado;
+    var ruta = "/avatars/" + temporadaActual + "/" + expresion + ".jpg";
+    if (temporadaActual === "verano") ruta = "/avatars/normal/" + expresion + ".jpg";
+    return origen + ruta;
+  }
+  var avatarUrl = urlExpresionAvatar("idle");
   var avatarMoodTimer = null;
   var avatarMood = "idle";
   function cambiarExpresionAvatar(estado) {
-    var celdas = {
-      idle: [0, 0], thinking: [1, 0], processing: [2, 0],
-      speaking: [0, 1], error: [1, 1], offline: [2, 1]
-    };
-    var celda = celdas[estado] || celdas.idle;
     avatarMood = estado;
+    var url = urlExpresionAvatar(estado);
     [root.querySelector(".av img"), bub && bub.querySelector("img")].forEach(function (img) {
-      if (!img) return;
-      img.style.width = "300%";
-      img.style.height = "200%";
-      img.style.left = (-celda[0] * 100) + "%";
-      img.style.top = (-celda[1] * 100) + "%";
+      if (img && img.src !== url) img.src = url;
     });
   }
   function programarExpresion(estado, duracion) {
@@ -108,7 +104,7 @@
     ".b{position:fixed;left:0;top:0;width:58px;height:58px;border-radius:50%;overflow:hidden;border:0;padding:0;background:linear-gradient(145deg," + color + ",#111a 140%);background-color:" + color + ";color:#fff;cursor:grab;box-shadow:0 6px 16px #0004;z-index:2147483647;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;transition:transform .15s}" +
     ".b.s{transition:left .25s ease,top .25s ease,transform .15s}.b:hover{transform:scale(1.07)}.b.d{cursor:grabbing;transform:scale(1.12);box-shadow:0 10px 24px #0006}.b.oc{display:none}" +
     ".b.n::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid " + color + ";animation:ring 1.8s ease-out infinite;pointer-events:none}@keyframes ring{0%{transform:scale(.9);opacity:.8}100%{transform:scale(1.35);opacity:0}}" +
-    ".b svg{width:30px;height:30px;pointer-events:none}.b img{position:absolute;width:300%;height:200%;max-width:none;left:0;top:0;border-radius:0;pointer-events:none}" +
+    ".b svg{width:30px;height:30px;pointer-events:none}.b img{position:absolute;width:100%;height:100%;max-width:none;left:0;top:0;object-fit:cover;border-radius:inherit;pointer-events:none}" +
     ".tip{position:fixed;left:0;top:0;background:#fff;color:#111;border-radius:14px;box-shadow:0 6px 22px #0004;padding:10px 30px 10px 12px;font-size:13px;line-height:1.35;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .25s,transform .25s;z-index:2147483646}" +
     ".tip.v{opacity:1;pointer-events:auto;transform:none}.tip button{position:absolute;top:2px;right:4px;border:0;background:none;color:#777;font-size:14px;cursor:pointer;padding:4px}" +
     ".p{position:fixed;left:0;top:0;background:#fff;color:#111;border-radius:16px;box-shadow:0 10px 36px #0006;display:none;flex-direction:column;overflow:hidden;z-index:2147483647}.p.o{display:flex;animation:ent .22s ease-out}@keyframes ent{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}" +
@@ -138,7 +134,7 @@
 .tip button{color:#a9c4dc}
 .p{background:#0a1728;color:#eaf4ff;border:1px solid #24415e;border-radius:24px;box-shadow:0 24px 80px #000a,0 0 0 1px #50dfff12;overflow:hidden}
 .h{background:linear-gradient(125deg,#123b5a 0%,#10243d 52%,#0b192c 100%);padding:15px 15px;border-bottom:1px solid #244763}
-.av{position:relative;width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044;overflow:hidden}.av img{position:absolute;width:444%;height:auto;max-width:none;left:-170%;top:-52%;display:block;border-radius:0}
+.av{position:relative;width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044;overflow:hidden;border-radius:50%}.av img{position:absolute;width:100%;height:100%;max-width:none;left:0;top:0;object-fit:cover;display:block;border-radius:inherit}
 .av svg{width:27px;height:27px}
 .ti b{font-size:16px;letter-spacing:.2px;color:#f2f9ff}
 .ti small{font-size:10px;letter-spacing:.35px;color:#a7c3d9}
