@@ -208,5 +208,10 @@
     "kw": "director directora directivo directiva rector rectora autoridad institucional máxima autoridad",
     "a": "No tengo ese dato. Consultalo en la secretaría del IES N° 6 de Perico.",
     "sd": 1
+  },
+  {
+    "q": "¿Quién es el coordinador de la carrera de Ciencia de Datos e Inteligencia Artificial?",
+    "kw": "coordinador coordinadora",
+    "a": "El coordinador de la carrera es Torres Federico."
   }
 ]
