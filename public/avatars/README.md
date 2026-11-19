@@ -1,4 +1,4 @@
-# Avatares de Andresito
+# Avatares de Andy
 
 Subí aquí los recortes individuales de cada expresión. No subas las plantillas completas.
 
@@ -20,4 +20,4 @@ En cada carpeta, los archivos deben llamarse exactamente:
 
 Las imágenes actuales están en formato JPG. Mantené el mismo tamaño y encuadre en todos los recortes de una temporada. Mantené el mismo tamaño y encuadre en todos los recortes de una temporada.
 
-No cambies los nombres: el widget los utilizará para seleccionar la expresión según la temporada y el estado de Andresito.
+No cambies los nombres: el widget los utilizará para seleccionar la expresión según la temporada y el estado de Andy.
