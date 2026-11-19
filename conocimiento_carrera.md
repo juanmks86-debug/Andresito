@@ -111,3 +111,41 @@ Todas las materias son anuales. Los EDI (Espacios de Definición Institucional) 
 - **Análisis Matemático:** funciones, límites, continuidad, derivadas, integrales, campos escalares y vectoriales, derivadas parciales, gradiente, máximos y mínimos.
 - **Programación I:** estructuras de datos (arreglos, pilas, colas, listas, árboles, grafos), algoritmos de ordenación y búsqueda, recursividad, análisis de eficiencia, objetos y clases, y Python (tipos de datos, estructuras de control, módulos, librerías, manejo de errores).
 - **Ciencia y TIC:** historia y ética de la ciencia, sociedad de la información, organizaciones, redes, herramientas de trabajo colaborativo y ciudadanía digital.
+
+
+---
+
+## Registro de vigencia y actualización institucional (ciclo 2027)
+
+**Criterio de lectura:** los datos de esta sección se incorporan a partir de información aportada durante la revisión del asistente. Salvo que se indique expresamente una fuente o aprobación institucional, deben tratarse como información de trabajo pendiente de confirmación, no como comunicación oficial del IES.
+
+Estados:
+- **Confirmado por fuente institucional:** usar solo cuando exista una publicación, resolución o comunicación institucional verificable.
+- **Informado / pendiente de confirmación:** dato aportado durante la revisión; comunicarlo con esa aclaración y orientar a Nexo o Secretaría.
+- **Histórico:** válido para el período indicado; no extender su vigencia a años posteriores.
+- **Sin dato:** no completar mediante suposiciones; responder que no se dispone de información y derivar a la institución.
+
+### Ingreso 2027
+- **Preinscripciones:** se informó que ya comenzaron. Dato aportado durante la revisión; verificar en Nexo.
+- **Inscripciones oficiales:** fecha de inicio no confirmada. Consultar Nexo o Secretaría del IES N° 6 de Perico.
+- **Documentación mencionada para el ingreso:** copia del DNI, pago de cooperadora, copia autenticada del título de nivel secundario, foto 4x4, carnet sanitario, certificado de antecedentes penales del año en curso y carpeta colgante. **Estado: pendiente de confirmación institucional para 2027.** No presentarla como lista definitiva hasta contrastarla con la comunicación oficial.
+- **Canales de consulta:** plataforma Nexo (nexo.jujuy.edu.ar) y Secretaría del IES N° 6 de Perico.
+
+### Organización académica 2027
+- **Contenidos curriculares:** se informó que se estaba evaluando una readaptación de los contenidos de cada materia. No se confirmó que la propuesta haya sido aprobada ni implementada. No afirmar que el plan de estudios cambió.
+- **Horarios y modalidad:** durante la revisión no se informaron cambios. Esto no equivale a una confirmación oficial de que permanecerán sin cambios en 2027. La información general disponible indica modalidad presencial y horario de cursada de 18:30 a 22:40; verificar cualquier actualización institucional.
+- **Materias:** el detalle de primero, segundo y tercer año que figura en el apartado “Plan de estudios” es la nómina curricular disponible. No inferir modificaciones a partir de la evaluación de contenidos.
+
+### Servicios y participación estudiantil
+- **Centro de Estudiantes:** se informó que está activo y que Nicolás Sivila es su presidente. El período del mandato y la vigencia de esa autoridad no están confirmados. Para preguntas sobre autoridades actuales, indicar esa limitación y derivar a la institución.
+- **Tutorías:** se informó que durante 2026 se implementó un espacio mediante resolución. Para 2027 no hay definición confirmada sobre su continuidad. También se mencionó la posibilidad de que estudiantes presenten proyectos junto con el Centro de Estudiantes; no confundir esa iniciativa con la continuidad formal del espacio de tutorías.
+- **BEGUP:** beneficio provincial de Jujuy. La adhesión informada del instituto no confirma convocatorias, requisitos ni condiciones vigentes para 2027.
+- **Becas Progresar:** programa nacional. La adhesión informada no confirma convocatorias, requisitos ni fechas vigentes para 2027.
+
+### Convenios de pasantías
+- **Red Impulso y Canal 2 de Perico:** convenios informados para 2026. **Estado: histórico; continuidad en 2027 no confirmada.** No decir que siguen vigentes sin una comunicación institucional actualizada.
+
+### Regla obligatoria para las respuestas de Andresito
+Cuando se pregunte si la información está actualizada, no garantizar que toda la base esté vigente. Explicar que se responde con los datos disponibles, que algunos pueden corresponder a períodos anteriores o estar pendientes de confirmación y que fechas, autoridades, requisitos, beneficios, tutorías y convenios deben verificarse en Nexo o en la Secretaría del IES N° 6 de Perico.
+
+No transformar “se informó”, “se evalúa”, “se está considerando” o “no hay definiciones” en una decisión aprobada. No inferir continuidad de un año al siguiente. Si la fecha o vigencia no está confirmada, decirlo explícitamente.

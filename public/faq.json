@@ -57,7 +57,7 @@
   },
   {
     "q": "¿Cuándo es la inscripción y cómo me inscribo?",
-    "a": "La inscripción se hace en línea desde nexo.jujuy.edu.ar. Las fechas del período no las tengo cargadas: consultalas en la página oficial del instituto (ifdc6m-juj.infd.edu.ar) o en la secretaría del IES N° 6 de Perico. Para ingresar necesitás título de nivel medio (los mayores de 25 años tienen otra vía) y en 2026 se tomó un examen parcial de ingreso.",
+    "a": "Las preinscripciones para el ciclo lectivo 2027 ya comenzaron, según la información disponible. La fecha de inicio de las inscripciones oficiales todavía no está confirmada. Consultá las novedades en la plataforma Nexo (nexo.jujuy.edu.ar) o en la Secretaría del IES N° 6 de Perico. Los requisitos y fechas pueden actualizarse; verificá la documentación vigente antes de presentarla.",
     "kw": "inscripcion inscribir inscribirme inscribo anotar anotarme preinscripcion fechas abre abren cuando",
     "s": 6,
     "sd": 1
@@ -65,7 +65,7 @@
   {
     "q": "¿Qué documentación necesito presentar para inscribirme en la carrera?",
     "kw": "documentación documentos presentar papeles dni certificado notas inscripción inscribirme requisitos papeles necesarios",
-    "a": "No tengo ese dato. Consultalo en la secretaría del IES N° 6 de Perico.",
+    "a": "Según información aportada durante la revisión, la documentación mencionada para el ingreso 2027 incluye: copia del DNI, pago de cooperadora, copia autenticada del título de nivel secundario, foto 4x4, carnet sanitario, certificado de antecedentes penales del año en curso y carpeta colgante. IMPORTANTE: esta lista está pendiente de confirmación institucional y puede cambiar. Consultá el listado oficial en Nexo o en la Secretaría del IES N° 6 de Perico.",
     "sd": 1
   },
   {
@@ -77,7 +77,7 @@
   },
   {
     "q": "¿Hay becas o beneficios para estudiantes?",
-    "a": "Sí: el instituto está adherido al BEGUP (Boleto Educativo Gratuito Provincial) y a las Becas Progresar.",
+    "a": "Según la información disponible, el instituto está adherido al BEGUP (Boleto Educativo Gratuito Provincial, de Jujuy) y al programa nacional Becas Progresar. La adhesión institucional no garantiza por sí sola que una convocatoria, inscripción o requisito esté vigente para un año determinado. Consultá las condiciones y fechas oficiales de cada programa.",
     "kw": "beca becas progresar begup boleto beneficio beneficios",
     "s": 8
   },
@@ -153,13 +153,13 @@
   },
   {
     "q": "¿Hay centro de estudiantes?",
-    "a": "Sí, hay un Centro de Estudiantes activo. Su presidente es Nicolás Sivila.",
+    "a": "Según la información disponible, el IES N° 6 cuenta con un Centro de Estudiantes activo. Se informó que su presidente es Nicolás Sivila, pero el período de ese mandato y su vigencia actual no están confirmados. Para conocer las autoridades actuales, consultá al Centro de Estudiantes o a la institución.",
     "kw": "centro estudiantes presidente",
     "s": 17
   },
   {
     "q": "¿Hay pasantías o convenios con empresas?",
-    "a": "Para 2026 hay convenios de pasantía con Red Impulso y Canal 2 de Perico.",
+    "a": "Se informó que durante 2026 existieron convenios de pasantía con Red Impulso y Canal 2 de Perico. No hay confirmación disponible sobre su continuidad durante 2027. Consultá en la Secretaría del IES N° 6 antes de considerar esos convenios vigentes.",
     "kw": "pasantia pasantias convenio convenios impulso canal empresas",
     "s": 18
   },
@@ -182,7 +182,7 @@
   },
   {
     "q": "¿Hay tutorías o apoyo académico?",
-    "a": "Durante 2026 se implementó un espacio de tutoría por resolución. Para 2027 todavía no hay definiciones.",
+    "a": "Según la información disponible, durante 2026 se implementó un espacio de tutoría mediante resolución. Para 2027 no hay continuidad institucional confirmada. También se informó que los estudiantes pueden impulsar proyectos conjuntamente con el Centro de Estudiantes; esto no confirma por sí solo la continuidad del espacio formal de tutorías. Consultá las definiciones vigentes en la institución.",
     "kw": "tutoria tutorias apoyo academico"
   },
   {
