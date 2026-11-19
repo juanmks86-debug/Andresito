@@ -1,50 +1,121 @@
-# Andresito - chatbot de la carrera de Ciencia de Datos e IA (IES N° 6, Perico)
+# Andresito — Asistente académico del IES N.º 6
 
-Andresito es un chat flotante que responde preguntas sobre la Tecnicatura Superior en Ciencia de Datos e Inteligencia Artificial.
-Primero busca la respuesta en las preguntas frecuentes (gratis e instantáneo) y, si no la encuentra, consulta a un modelo de IA que
-responde **solo** con la información de este repositorio.
+Andresito es un chatbot web para acompañar a estudiantes y aspirantes de la **Tecnicatura Superior en Ciencia de Datos e Inteligencia Artificial** del Instituto de Educación Superior N.º 6, sede Perico (Jujuy).
 
-## Cómo está armado
+El asistente combina respuestas rápidas a partir de preguntas frecuentes con una consulta a un modelo de IA cuando la FAQ no alcanza. La IA utiliza la información institucional incluida en este repositorio y debe reconocer cuando no cuenta con un dato, en lugar de inventarlo.
 
-| Archivo | Para qué sirve |
+## Funciones actuales
+
+### Chat e interfaz
+- Chat flotante que puede abrirse y cerrarse desde la burbuja del asistente.
+- Burbuja arrastrable para ubicarla en la pantalla.
+- Interfaz adaptable a computadora y celular.
+- Accesos rápidos para **Ingreso, Materias, Inscripciones, Carrera y Vida institucional**.
+- Consultas mediante texto.
+- Entrada por micrófono y reproducción de respuestas por audio.
+- Indicadores visuales del estado del asistente.
+- Mensajes de bienvenida y respuestas breves para saludos, agradecimientos y despedidas.
+
+### Avatar y estados visuales
+El avatar utiliza imágenes individuales para cada expresión. No se recorta una plantilla completa en tiempo de ejecución.
+
+Estados disponibles:
+- `idle`: espera.
+- `thinking`: pensamiento.
+- `processing`: procesamiento.
+- `answering`: respuesta hablada (estado interno `speaking`).
+- `error`: error.
+- `offline`: asistente sin conexión.
+
+Las imágenes se organizan por temporada en `public/avatars/`:
+- `graduacion/`
+- `navidad/`
+- `verano/`
+- `normal/`
+
+Cada carpeta debe contener las seis imágenes individuales: `idle.jpg`, `thinking.jpg`, `processing.jpg`, `answering.jpg`, `error.jpg` y `offline.jpg`.
+
+### Calendario de temporadas
+El avatar selecciona automáticamente la plantilla según la fecha local del dispositivo:
+
+| Temporada | Período |
 |---|---|
-| `public/widget.js` | El chat que se ve en pantalla (burbuja arrastrable, sonidos, voz, modo oscuro). |
-| `public/faq.json` | **Las preguntas y respuestas.** Es la única fuente: la leen el chat y la IA. |
-| `conocimiento_carrera.md` | Información completa de la carrera. La IA la usa cuando la FAQ no alcanza. |
-| `api/chat.js` | Servidor del chat: valida el pedido, limita el uso y consulta a la IA. |
-| `api/preguntas.js` | Lista (protegida con clave) las preguntas que Andresito no supo responder. |
-| `public/index.html` | Página de prueba. |
-| `vercel.json` | Configuración de Vercel (archivos que usa la función y cabeceras de seguridad). |
+| Graduación | 18/11/2026 al 24/12/2026 |
+| Navidad | 25/12/2026 al 14/01/2027 |
+| Verano | 15/01/2027 al 26/03/2027 |
+| Normal | Desde el 27/03/2027 y fuera de los períodos anteriores |
 
-## Cómo actualizar las respuestas
+El widget revisa periódicamente si cambió la temporada para actualizar la expresión sin exigir que el usuario recargue la página. Si una imagen de temporada no carga, utiliza la imagen equivalente de la carpeta `normal/` como alternativa.
+
+### Prueba visual de temporadas
+Para probar una fecha sin modificar el calendario real, agregá el parámetro `avatarTest=AAAA-MM-DD` a la URL de la página que contiene el chatbot.
+
+Ejemplos:
+- Graduación: `?avatarTest=2026-11-20`
+- Navidad: `?avatarTest=2026-12-26`
+- Verano: `?avatarTest=2027-01-20`
+- Normal: `?avatarTest=2027-03-30`
+
+También se conserva la compatibilidad con el parámetro en la URL del script del widget. El modo de prueba es visual: no cambia las respuestas ni la personalidad del asistente.
+
+## Base de conocimientos
+
+Andresito utiliza dos fuentes complementarias:
+
+| Archivo | Función |
+|---|---|
+| `public/faq.json` | Preguntas frecuentes y respuestas rápidas que utiliza el widget; también se incorporan al contexto de la IA. |
+| `conocimiento_carrera.md` | Información institucional y académica ampliada que consulta la IA. |
+
+La búsqueda de FAQ normaliza mayúsculas y tildes, contempla errores de tipeo y utiliza palabras clave y sinónimos. Cuando la coincidencia no es suficientemente confiable, deriva la consulta a la IA en lugar de arriesgar una respuesta incorrecta.
+
+### Cómo actualizar las respuestas frecuentes
 
 Editá `public/faq.json`. Cada entrada tiene este formato:
 
 ```json
 {
- "q": "¿Quién es el coordinador de la carrera?",
- "a": "El coordinador de la carrera es Torres Federico.",
- "kw": "coordinador coordinadora coordina autoridad responsable",
- "s": 15
+  "q": "¿Quién es el coordinador de la carrera?",
+  "a": "El coordinador de la carrera es ...",
+  "kw": "coordinador coordinadora coordina autoridad responsable",
+  "s": 15
 }
 ```
 
-- `q`: la pregunta tal como se muestra en los botones sugeridos.
-- `a`: la respuesta. Los links (`https://...` o dominios `.edu.ar`) se vuelven clickeables.
-- `kw`: palabras clave sueltas, en minúscula y sin tildes, separadas por espacios. Es lo que usa Andresito para reconocer la pregunta
-  (tolera errores de tipeo). Agregá sinónimos.
-- `s` (opcional): si lo ponés, la pregunta se ofrece como sugerencia; los números chicos aparecen primero.
-- `sd` (opcional, poné `1`): marca una respuesta que todavía no tiene el dato completo, así queda registrado cuántas personas la piden.
+- `q`: pregunta que se muestra como sugerencia.
+- `a`: respuesta.
+- `kw`: palabras clave y sinónimos en minúscula, sin tildes y separados por espacios.
+- `s` (opcional): orden de aparición entre las sugerencias; los números menores aparecen primero.
+- `sd` (opcional, valor `1`): marca que falta completar o confirmar el dato y permite registrar cuántas personas consultan por él.
 
-Reglas del formato JSON: comillas dobles siempre, una coma entre entradas (y ninguna después de la última) y los saltos de línea
-dentro de una respuesta se escriben `\n`. Después de editar, abrí `https://TU-DOMINIO/faq.json` en el navegador: si se ve el texto, el
-formato está bien. Los cambios tardan hasta 5 minutos en verse.
+Usá comillas dobles en JSON, separá las entradas con comas y no agregues una coma después de la última. Dentro de una respuesta, los saltos de línea se escriben como `\\n`.
 
-Si cambia un dato importante (costos, fechas, coordinador), actualizalo también en `conocimiento_carrera.md` para que la IA no use el valor viejo.
+Cuando se actualicen datos importantes —por ejemplo fechas, costos, autoridades o requisitos— revisá también `conocimiento_carrera.md` para mantener coherentes las dos fuentes. No publiques datos institucionales sin confirmarlos.
 
-## Cómo ponerlo en otra página
+### Consultas que Andresito no pudo resolver
 
-Pegá esto antes de `</body>`:
+Las consultas sin respuesta útil pueden registrarse de forma anonimizada para detectar qué información falta. El endpoint administrativo es:
+
+`/api/preguntas?clave=TU_ADMIN_KEY`
+
+El acceso requiere la variable `ADMIN_KEY`. Si Upstash está configurado, los registros se guardan allí; sin ese servicio, el registro persistente no está disponible. Antes de incorporar una pregunta a la FAQ, verificá la respuesta con una fuente institucional.
+
+## Estructura principal del proyecto
+
+| Archivo o carpeta | Función |
+|---|---|
+| `public/widget.js` | Interfaz del chat, accesos rápidos, voz, estados y avatar. |
+| `public/faq.json` | Preguntas frecuentes y respuestas rápidas. |
+| `public/avatars/` | Imágenes individuales del avatar, organizadas por temporada. |
+| `conocimiento_carrera.md` | Base de conocimiento ampliada de la carrera. |
+| `api/chat.js` | Backend: valida solicitudes, aplica límites y consulta al proveedor de IA. |
+| `api/preguntas.js` | Consulta administrativa protegida de preguntas sin respuesta. |
+| `public/index.html` | Página de prueba del widget. |
+| `vercel.json` | Configuración de despliegue y cabeceras. |
+
+## Cómo integrar Andresito en otra página
+
+Pegá este código antes de cerrar la etiqueta `</body>`:
 
 ```html
 <script src="https://andresito-seven.vercel.app/widget.js" data-color="#0066ff" defer></script>
@@ -52,46 +123,43 @@ Pegá esto antes de `</body>`:
 
 Atributos opcionales:
 
-| Atributo | Qué hace | Ejemplo |
+| Atributo | Función | Ejemplo |
 |---|---|---|
-| `data-color` | Color principal | `#0066ff` |
-| `data-nombre` | Nombre del asistente | `Andresito` |
-| `data-posicion` | Posición inicial de la burbuja | `izquierda` |
-| `data-icono` | Imagen propia para la burbuja | `https://.../logo.png` |
-| `data-api` | Dirección de `api/chat` si es otra | `https://.../api/chat` |
-| `data-faq` | Dirección del `faq.json` si es otro | `https://.../faq.json` |
+| `data-color` | Color principal del widget. | `#0066ff` |
+| `data-nombre` | Nombre mostrado por el asistente. | `Andresito` |
+| `data-posicion` | Posición inicial de la burbuja. | `izquierda` |
+| `data-icono` | Imagen propia para la burbuja. | URL de una imagen |
+| `data-api` | URL alternativa del endpoint de chat. | `https://dominio/api/chat` |
+| `data-faq` | URL alternativa del archivo de FAQ. | `https://dominio/faq.json` |
 
-Para que funcione en un sitio que no sea el de Vercel, agregá su dirección (por ejemplo `https://www.dominio-del-instituto.edu.ar`)
-en la variable `ALLOWED_ORIGINS` de Vercel y hacé un Redeploy.
+Para permitir el uso desde otro dominio, agregá su origen a `ALLOWED_ORIGINS` en las variables de entorno de Vercel y volvé a desplegar.
 
 ## Despliegue en Vercel
 
-1. Importá el repositorio. **Root Directory vacío** (si dice `public`, la carpeta `api` no se despliega y el chat da error 404).
-2. En *Settings > Environment Variables* cargá:
+1. Importá el repositorio en Vercel.
+2. Dejá **Root Directory** vacío (raíz del repositorio). Si se configura `public`, la carpeta `api` no se desplegará correctamente.
+3. Configurá las variables de entorno necesarias:
 
-| Variable | Obligatoria | Qué es |
+| Variable | Requerida | Descripción |
 |---|---|---|
-| `IA_KEY` | Sí | Clave de la IA (Groq u otro proveedor compatible con OpenAI). |
-| `IA_MODELO` | No | Uno o varios modelos separados por coma; si el primero no existe, prueba el siguiente. |
-| `IA_URL` | No | Endpoint del proveedor. Por defecto, Groq. |
-| `ALLOWED_ORIGINS` | No | Sitios externos autorizados, separados por coma. |
-| `LIMITE_IP_HORA` / `LIMITE_DIA` | No | Mensajes por IP por hora (20) y totales por día (500). |
-| `ADMIN_KEY` | Para `/api/preguntas` | Clave larga para ver las preguntas sin respuesta. |
-| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | Recomendadas | Base gratuita (Upstash) para límites confiables y para guardar las preguntas sin respuesta. |
+| `IA_KEY` | Sí | Clave del proveedor de IA compatible con la API de OpenAI. |
+| `IA_MODELO` | No | Uno o varios modelos separados por coma; se prueban alternativas ante ciertos errores del modelo. |
+| `IA_URL` | No | Endpoint del proveedor. Por defecto se utiliza Groq. |
+| `ALLOWED_ORIGINS` | Según integración | Orígenes externos autorizados, separados por coma. |
+| `LIMITE_IP_HORA` | No | Límite de mensajes por IP por hora (predeterminado: 20). |
+| `LIMITE_DIA` | No | Límite global diario (predeterminado: 500). |
+| `ADMIN_KEY` | Para consultas administrativas | Clave para acceder a `/api/preguntas`. |
+| `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` | Recomendadas | Persistencia de límites y registro de preguntas sin respuesta. |
 
-3. Hacé un Redeploy después de cambiar variables.
-4. Verificación: `https://TU-DOMINIO/api/chat` debe mostrar `{"error":"Método no permitido."}` y, en *Logs*, la línea `[INFO] base de conocimiento: ...`
-   debe mostrar números mayores a cero (si dice 0, la función no está leyendo los archivos).
+4. Después de modificar variables de entorno, generá un nuevo despliegue.
+5. Revisá los registros de Vercel para confirmar que la base de conocimiento y las FAQ se cargaron correctamente.
 
-## Mejorar con el uso
+## Seguridad y mantenimiento
 
-Entrá a `https://TU-DOMINIO/api/preguntas?clave=TU_ADMIN_KEY`: muestra las preguntas que no tuvieron respuesta en la FAQ, agrupadas por
-cantidad. Pasá las más repetidas a `public/faq.json`. Se guardan sin IP y con correos, teléfonos, números largos y links reemplazados.
-No se detectan nombres propios.
-
-## Mantenimiento
-
-- **La clave de la IA puede vencer.** Si el chat deja de usar la IA, revisá la fecha de vencimiento en el panel del proveedor y generá otra clave.
-- **Los modelos gratuitos cambian de nombre.** Si en *Logs* aparece `IA respondió 404`, actualizá `IA_MODELO` con un modelo vigente.
-- **Seguridad:** la clave vive solo en variables de entorno, el chat limita el uso por IP, valida el origen y no guarda datos personales.
-  Activá la verificación en dos pasos en GitHub y Vercel: quien controle el repositorio controla el código que corre en las páginas donde se inserte el chat.
+- La clave del proveedor de IA debe permanecer en variables de entorno; nunca la incluyas en el código del navegador ni en el repositorio.
+- El backend valida el origen, el método y el contenido de las solicitudes.
+- Se aplican límites de uso por IP y globales. Sin Upstash, el contador en memoria es de mejor esfuerzo y puede reiniciarse entre ejecuciones.
+- Los registros de preguntas eliminan correos, URLs y números largos antes de guardarse; aun así, revisá los registros antes de compartirlos.
+- Si la IA deja de responder, revisá la vigencia de `IA_KEY`, el modelo configurado y los registros de Vercel.
+- Mantené actualizadas las FAQ y la base de conocimiento con información confirmada por el instituto.
+- Protegé las cuentas de GitHub y Vercel con verificación en dos pasos.
