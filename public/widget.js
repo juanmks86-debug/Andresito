@@ -9,9 +9,11 @@
   var nombre = script.dataset.nombre || "Andresito";
   var scriptUrl = new URL(script.src);
   var origen = scriptUrl.origin;
-  // Modo de prueba visual: agregar ?avatarTest=AAAA-MM-DD a la URL del widget.
-  var fechaPruebaAvatar = scriptUrl.searchParams.get("avatarTest");
-  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(fechaPruebaAvatar || "")) fechaPruebaAvatar = null;
+  // Modo de prueba visual: acepta ?avatarTest=AAAA-MM-DD en la URL del widget
+  // o en la URL de la página que lo contiene (más sencillo para las pruebas).
+  var paginaUrl = new URL(window.location.href);
+  var fechaPruebaAvatar = paginaUrl.searchParams.get("avatarTest") || scriptUrl.searchParams.get("avatarTest");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaPruebaAvatar || "")) fechaPruebaAvatar = null;
   var api = script.dataset.api || origen + "/api/chat";
   var faqUrl = script.dataset.faq || origen + "/faq.json";
   var historial = [], vozActiva = false, preguntadas = {}, rec = null, ocupado = false, FAQ = [];
