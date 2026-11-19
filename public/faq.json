@@ -228,5 +228,10 @@
     "q": "¿El instituto cuenta con servicio de fotocopiadora?",
     "kw": "fotocopiadora fotocopiadoras fotocopia fotocopias",
     "a": "Sí. El instituto cuenta con servicio de fotocopiadora."
+  },
+  {
+    "q": "¿Puedo solicitar una netbook para usar durante las clases?",
+    "kw": "netbook netbooks solicitar solicito pedir computadora computadoras usar clases clase",
+    "a": "Sí. Podés solicitar una netbook para usar dentro de las horas de clase. Para consultar la disponibilidad y las condiciones de uso, acercate al IES N° 6 de Perico."
   }
 ]
