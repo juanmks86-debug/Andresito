@@ -145,7 +145,7 @@ Estados:
 ### Convenios de pasantías
 - **Red Impulso y Canal 2 de Perico:** convenios informados para 2026. **Estado: histórico; continuidad en 2027 no confirmada.** No decir que siguen vigentes sin una comunicación institucional actualizada.
 
-### Regla obligatoria para las respuestas de Andresito
+### Regla obligatoria para las respuestas de Andy
 Cuando se pregunte si la información está actualizada, no garantizar que toda la base esté vigente. Explicar que se responde con los datos disponibles, que algunos pueden corresponder a períodos anteriores o estar pendientes de confirmación y que fechas, autoridades, requisitos, beneficios, tutorías y convenios deben verificarse en Nexo o en la Secretaría del IES N° 6 de Perico.
 
 No transformar “se informó”, “se evalúa”, “se está considerando” o “no hay definiciones” en una decisión aprobada. No inferir continuidad de un año al siguiente. Si la fecha o vigencia no está confirmada, decirlo explícitamente.
