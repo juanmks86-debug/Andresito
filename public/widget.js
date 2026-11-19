@@ -73,6 +73,32 @@
     return "https://raw.githubusercontent.com/juanmks86-debug/Andresito/main/" + archivo;
   }
   var avatarUrl = avatarEstacional();
+  // La plantilla se interpreta como una cuadrícula de 3 columnas por 2 filas.
+  // Cada estado selecciona una celda; la imagen estacional no se reemplaza.
+  var avatarMoodTimer = null;
+  var avatarMood = "idle";
+  function cambiarExpresionAvatar(estado) {
+    var celdas = {
+      idle: [0, 0], thinking: [1, 0], processing: [2, 0],
+      speaking: [0, 1], error: [1, 1], offline: [2, 1]
+    };
+    var celda = celdas[estado] || celdas.idle;
+    avatarMood = estado;
+    [root.querySelector(".av img"), bub && bub.querySelector("img")].forEach(function (img) {
+      if (!img) return;
+      img.style.width = "300%";
+      img.style.height = "200%";
+      img.style.left = (-celda[0] * 100) + "%";
+      img.style.top = (-celda[1] * 100) + "%";
+    });
+  }
+  function programarExpresion(estado, duracion) {
+    clearTimeout(avatarMoodTimer);
+    cambiarExpresionAvatar(estado);
+    if (duracion) avatarMoodTimer = setTimeout(function () {
+      cambiarExpresionAvatar("idle");
+    }, duracion);
+  }
   var host = document.createElement("div");
   document.body.appendChild(host);
   var root = host.attachShadow({ mode: "open" });
@@ -82,7 +108,7 @@
     ".b{position:fixed;left:0;top:0;width:58px;height:58px;border-radius:50%;overflow:hidden;border:0;padding:0;background:linear-gradient(145deg," + color + ",#111a 140%);background-color:" + color + ";color:#fff;cursor:grab;box-shadow:0 6px 16px #0004;z-index:2147483647;touch-action:none;user-select:none;-webkit-user-select:none;display:flex;align-items:center;justify-content:center;transition:transform .15s}" +
     ".b.s{transition:left .25s ease,top .25s ease,transform .15s}.b:hover{transform:scale(1.07)}.b.d{cursor:grabbing;transform:scale(1.12);box-shadow:0 10px 24px #0006}.b.oc{display:none}" +
     ".b.n::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:2px solid " + color + ";animation:ring 1.8s ease-out infinite;pointer-events:none}@keyframes ring{0%{transform:scale(.9);opacity:.8}100%{transform:scale(1.35);opacity:0}}" +
-    ".b svg{width:30px;height:30px;pointer-events:none}.b img{position:absolute;width:444%;height:auto;max-width:none;left:-170%;top:-52%;border-radius:0;pointer-events:none}" +
+    ".b svg{width:30px;height:30px;pointer-events:none}.b img{position:absolute;width:300%;height:200%;max-width:none;left:0;top:0;border-radius:0;pointer-events:none}" +
     ".tip{position:fixed;left:0;top:0;background:#fff;color:#111;border-radius:14px;box-shadow:0 6px 22px #0004;padding:10px 30px 10px 12px;font-size:13px;line-height:1.35;cursor:pointer;opacity:0;pointer-events:none;transform:translateY(6px);transition:opacity .25s,transform .25s;z-index:2147483646}" +
     ".tip.v{opacity:1;pointer-events:auto;transform:none}.tip button{position:absolute;top:2px;right:4px;border:0;background:none;color:#777;font-size:14px;cursor:pointer;padding:4px}" +
     ".p{position:fixed;left:0;top:0;background:#fff;color:#111;border-radius:16px;box-shadow:0 10px 36px #0006;display:none;flex-direction:column;overflow:hidden;z-index:2147483647}.p.o{display:flex;animation:ent .22s ease-out}@keyframes ent{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}" +
@@ -195,6 +221,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
   bub.setAttribute("aria-label", "Abrir chat con " + nombre);
   if (leer("chatbot_visto")) bub.classList.remove("n");
   function estado(t) { st.textContent = t || ""; }
+  cambiarExpresionAvatar("idle");
   function estadoAsistente(tipo, texto) {
     var p = $("#presencia"), etiqueta = $("#textoEstado");
     if (!p || !etiqueta) return;
@@ -342,6 +369,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
   });
 
   function responder(el, txt, guardarHist, sonido) {
+    programarExpresion("speaking", 2200);
     el.className = "g a"; el.removeAttribute("role"); el.removeAttribute("aria-label");
     contenido(el, txt);
     if (guardarHist) historial.push({ role: "assistant", content: txt });
@@ -354,10 +382,11 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
     var t = input.value.trim();
     if (!t || ocupado) return;
     ocupado = true;
+    programarExpresion("thinking", 2200);
     input.value = ""; quitarChips(); agregar(t, "u"); sonar("enviar");
     try {
       var sal = charla(t);
-      if (sal) { var e0 = agregar(sal, "a"); sonar("recibir"); hablar(sal); chips(sugerencias()); return; }
+      if (sal) { var e0 = agregar(sal, "a"); programarExpresion("speaking", 2200); sonar("recibir"); hablar(sal); chips(sugerencias()); return; }
       var hit = buscar(t);
       historial.push({ role: "user", content: t });
       var el = escribiendo();
@@ -372,6 +401,8 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
       }
       try {
         estadoAsistente("busy", "Consultando IA…");
+        clearTimeout(avatarMoodTimer);
+        cambiarExpresionAvatar("processing");
         var r = await fetch(api, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: historial.slice(-6) }) });
         var d = await r.json();
         if (!d.reply) { var err = new Error(d.error || "El servicio no pudo generar una respuesta."); err.status = r.status; err.detalle = d.error || ""; throw err; }
@@ -383,10 +414,11 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
         else if (e && e.status === 503) mensaje = "El asistente con IA no está configurado. Podés usar las preguntas frecuentes o consultar en el IES.";
         else if (e && e.status === 502) mensaje = "El servicio de IA no está respondiendo. Las preguntas frecuentes siguen disponibles.";
         else if (e && e.name === "TypeError") mensaje = "No pude conectar con el servidor. Revisá tu conexión a Internet e intentá nuevamente.";
+        programarExpresion("error", 3500);
         responder(el, mensaje, false, "error"); estadoAsistente("warn", "Servicio limitado");
       }
       chips(sugerencias());
-    } finally { ocupado = false; }
+    } finally { ocupado = false; clearTimeout(avatarMoodTimer); if (avatarMood !== "error") programarExpresion("idle", 0); }
   }
 
   function hablar(txt) {
@@ -398,7 +430,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
   // ---- Burbuja arrastrable (se pega al borde más cercano y recuerda su posición) ----
   var TAM = 64, M = 20, drag = null, arrastro = false;
   var iconoFinal = icono || avatarUrl;
-  if (iconoFinal) { var im = document.createElement("img"); im.alt = ""; im.src = iconoFinal; bub.textContent = ""; bub.appendChild(im); }
+  if (iconoFinal) { var im = document.createElement("img"); im.alt = ""; im.src = iconoFinal; bub.textContent = ""; bub.appendChild(im); if (!icono) cambiarExpresionAvatar("idle"); }
   function limitar(n, a, b) { return Math.max(a, Math.min(b, n)); }
   function movil() { return window.innerWidth <= 520; }
   var pos = { lado: izq ? "l" : "r", y: 1 };
