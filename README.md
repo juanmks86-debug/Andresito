@@ -143,13 +143,31 @@ Para permitir el uso desde otro dominio, agregá su origen a `ALLOWED_ORIGINS` e
 | Variable | Requerida | Descripción |
 |---|---|---|
 | `IA_KEY` | Sí | Clave del proveedor de IA compatible con la API de OpenAI. |
-| `IA_MODELO` | No | Uno o varios modelos separados por coma; se prueban alternativas ante ciertos errores del modelo. |
+| `IA_MODELO` | No | Permite seleccionar uno o ambos modelos de la lista gratuita autorizada (`openai/gpt-oss-20b`, `openai/gpt-oss-120b`). Cualquier modelo fuera de esa lista se ignora. Si no se configura o no contiene un modelo permitido, se usan ambos. |
 | `IA_URL` | No | Endpoint del proveedor. Por defecto se utiliza Groq. |
 | `ALLOWED_ORIGINS` | Según integración | Orígenes externos autorizados, separados por coma. |
 | `LIMITE_IP_HORA` | No | Límite de mensajes por IP por hora (predeterminado: 20). |
 | `LIMITE_DIA` | No | Límite global diario (predeterminado: 500). |
 | `ADMIN_KEY` | Para consultas administrativas | Clave para acceder a `/api/preguntas`. |
 | `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` | Recomendadas | Persistencia de límites y registro de preguntas sin respuesta. |
+
+### Política de modelos gratuitos y límites de cuota
+
+El backend mantiene una **lista cerrada de modelos permitidos**:
+
+- `openai/gpt-oss-20b`
+- `openai/gpt-oss-120b`
+
+El orden predeterminado es el indicado arriba. Si se configura `IA_MODELO`, solo se consideran los nombres que pertenezcan a esa lista; no se habilitan modelos externos a ella. Si la variable está vacía o no contiene ningún modelo permitido, se recupera la lista predeterminada.
+
+Comportamiento ante límites del proveedor:
+
+1. Si el primer modelo devuelve HTTP `429` (límite temporal o cuota), el backend intenta el siguiente modelo permitido.
+2. Si los modelos gratuitos disponibles devuelven `429`, Andresito responde HTTP `503` e informa que la cuota gratuita alcanzó temporalmente su límite.
+3. En ese caso no se cambia a un modelo pago ni se activa una alternativa de facturación por uso. El servicio queda temporalmente indisponible hasta que el proveedor restablezca la cuota.
+4. Los errores `400` o `404` permiten probar el siguiente modelo de la lista; otros errores generan una respuesta controlada.
+
+**Importante:** la lista es una restricción aplicada por el código de Andresito, no una garantía de gratuidad permanente del proveedor. La disponibilidad y las condiciones del plan gratuito pueden cambiar. Antes de actualizar la lista o el proveedor, verificá sus condiciones vigentes. No habilites facturación, recargas automáticas ni modelos pagos para resolver un límite de uso. La configuración de facturación y las condiciones de la cuenta del proveedor son externas a este repositorio.
 
 4. Después de modificar variables de entorno, generá un nuevo despliegue.
 5. Revisá los registros de Vercel para confirmar que la base de conocimiento y las FAQ se cargaron correctamente.
@@ -174,5 +192,5 @@ node --test tests/*.test.js
 ```
 
 - `tests/faq.test.js`: extrae y ejecuta las funciones reales del buscador desde `public/widget.js` (sin duplicar su implementación) y valida la estructura de la FAQ, preguntas exactas, variantes y consultas ajenas al ámbito institucional.
-- `tests/chat-api.test.js`: verifica el contrato del endpoint, validaciones de solicitudes, inclusión de las reglas y FAQ en el contexto de IA, respuesta correcta y manejo de errores. El proveedor se simula; no se realizan llamadas reales ni se utiliza una clave válida.
+- `tests/chat-api.test.js`: verifica el contrato del endpoint, validaciones de solicitudes, inclusión de las reglas y FAQ en el contexto de IA, respuesta correcta, manejo de errores, selección restringida de modelos gratuitos, fallback ante HTTP `429` y respuesta HTTP `503` cuando se agota la cuota de los modelos permitidos. El proveedor se simula; no se realizan llamadas reales ni se utiliza una clave válida.
 - `.github/workflows/faq-tests.yml`: ejecuta ambas suites automáticamente en GitHub Actions ante cambios relevantes y en las solicitudes de integración.
