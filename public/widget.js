@@ -70,7 +70,7 @@
     if (fecha >= 20261118 && fecha <= 20261224) archivo = "Plantilla_Graduacion.jpeg";
     else if (fecha >= 20261225 && fecha <= 20270114) archivo = "Plantilla_Navidad.jpeg";
     else if (fecha >= 20270115 && fecha <= 20270326) archivo = "Plantilla_Verano.jpeg";
-    return origen + "/" + archivo;
+    return "https://raw.githubusercontent.com/juanmks86-debug/Andresito/main/" + archivo;
   }
   var avatarUrl = avatarEstacional();
   var host = document.createElement("div");
