@@ -233,5 +233,10 @@
     "q": "¿Puedo solicitar una netbook para usar durante las clases?",
     "kw": "netbook netbooks solicitar solicito pedir computadora computadoras usar clases clase",
     "a": "Sí. Podés solicitar una netbook para usar dentro de las horas de clase. Para consultar la disponibilidad y las condiciones de uso, acercate al IES N° 6 de Perico."
+  },
+  {
+    "q": "¿El instituto tiene acceso a Internet para los estudiantes?",
+    "kw": "acceso internet estudiantes estudiante conexión conectividad red starlink",
+    "a": "Sí. El instituto cuenta con conexión a Internet mediante una red Starlink. No tengo confirmado si la red está habilitada para el uso personal de todos los estudiantes."
   }
 ]
