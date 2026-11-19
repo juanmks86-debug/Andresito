@@ -16,7 +16,7 @@ assert.notEqual(inicio, -1, "No se encontró el bloque del buscador en public/wi
 assert.notEqual(fin, -1, "No se encontró el final del bloque del buscador en public/widget.js");
 
 const sandbox = { FAQ: [] };
-vm.runInNewContext(widget.slice(inicio, fin) + "\nthis.prepararFAQ = prepararFAQ; this.buscar = buscar;", sandbox);
+vm.runInNewContext(widget.slice(inicio, fin) + "\nthis.prepararFAQ = prepararFAQ; this.buscar = buscar; this.buscarMateriasPorAnio = buscarMateriasPorAnio;", sandbox);
 sandbox.prepararFAQ(faq);
 const buscar = pregunta => sandbox.buscar(pregunta);
 
@@ -40,6 +40,22 @@ for (const f of faq) {
   });
 }
 
+for (const [pregunta, esperada] of [
+  ["¿Cuáles son las materias de primer año de la Tecnicatura en Ciencia de Datos e Inteligencia Artificial?", "¿Qué materias hay en primer año?"],
+  ["¿Qué materias se cursan en segundo año?", "¿Qué materias hay en segundo año?"],
+  ["¿Qué materias se cursan en tercer año de la Tecnicatura?", "¿Qué materias hay en tercer año?"],
+  ["Decime las asignaturas del 3er año", "¿Qué materias hay en tercer año?"]
+]) {
+  test("consulta del plan por año: " + pregunta, () => {
+    const hit = sandbox.buscarMateriasPorAnio(pregunta);
+    assert.ok(hit, "No se detectó el año solicitado");
+    assert.equal(hit.q, esperada);
+    if (esperada === "¿Qué materias hay en tercer año?") {
+      assert.match(hit.a, /Prácticas Profesionalizantes III/);
+      assert.doesNotMatch(hit.a, /Prácticas Profesionalizantes II\\b/);
+    }
+  });
+}
 const variantes = [
   ["¿Se pueden solicitar netbooks para usar en clase?", "¿Puedo solicitar una netbook para usar durante las clases?"],
   ["¿Los estudiantes pueden usar la conexión a Internet?", "¿El instituto tiene acceso a Internet para los estudiantes?"],
