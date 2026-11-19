@@ -2,8 +2,8 @@
 // Variables de entorno (Vercel > Settings > Environment Variables):
 //   IA_KEY            (obligatoria) clave del proveedor de IA
 //   IA_URL            (opcional) endpoint compatible con OpenAI. Por defecto: Groq
-//   IA_MODELO         (opcional) uno o varios modelos separados por coma; si el primero no existe (404/400) prueba el siguiente.
-//                     Por defecto: llama-3.3-70b-versatile,openai/gpt-oss-20b,llama-3.1-8b-instant
+//   IA_MODELO         (opcional) solo acepta modelos incluidos en la lista gratuita permitida.
+//                     No se habilitan modelos fuera de la lista gratuita.
 //   ALLOWED_ORIGINS   (opcional) dominios permitidos, separados por coma. Ej: https://ies6.edu.ar,https://www.ies6.edu.ar
 //   LIMITE_IP_HORA    (opcional) mensajes por IP por hora. Por defecto: 20
 //   LIMITE_DIA        (opcional) mensajes totales por día. Por defecto: 500
@@ -14,7 +14,11 @@ const fs = require("fs");
 const path = require("path");
 
 const IA_URL = process.env.IA_URL || "https://api.groq.com/openai/v1/chat/completions";
-const MODELOS = (process.env.IA_MODELO || "llama-3.3-70b-versatile,openai/gpt-oss-20b,llama-3.1-8b-instant").split(",").map(function (m) { return m.trim(); }).filter(Boolean);
+const MODELOS_GRATUITOS = ["openai/gpt-oss-20b", "openai/gpt-oss-120b"];
+// Lista cerrada: una variable IA_MODELO no puede introducir modelos ajenos al plan gratuito.
+const MODELOS_SOLICITADOS = (process.env.IA_MODELO || MODELOS_GRATUITOS.join(",")).split(",").map(function (m) { return m.trim(); }).filter(Boolean);
+const MODELOS = MODELOS_GRATUITOS.filter(function (m) { return MODELOS_SOLICITADOS.indexOf(m) >= 0; });
+if (!MODELOS.length) MODELOS.push.apply(MODELOS, MODELOS_GRATUITOS);
 const LIMITE_IP = parseInt(process.env.LIMITE_IP_HORA || "20", 10);
 const LIMITE_DIA = parseInt(process.env.LIMITE_DIA || "500", 10);
 const MAX_MENSAJES = 6, MAX_CHARS = 300;
@@ -140,6 +144,7 @@ module.exports = async function handler(req, res) {
 
   const ultima = mensajes[mensajes.length - 1].content;
   const FALLO = { error: "El asistente no está disponible ahora." };
+  let cuotaGratuitaAgotada = false;
   const mensajesIA = [{ role: "system", content: SISTEMA }].concat(mensajes);
   try {
     for (const modelo of MODELOS) {
@@ -155,7 +160,8 @@ module.exports = async function handler(req, res) {
       if (!r.ok) {
         let detalle = ""; try { detalle = (await r.text()).slice(0, 300); } catch (e) {}
         console.error("IA respondió", r.status, "modelo:", modelo, detalle); // el detalle del proveedor no incluye la clave
-        if (r.status === 404 || r.status === 400) continue; // modelo inexistente o retirado: prueba el siguiente
+        if (r.status === 404 || r.status === 400) continue; // modelo inexistente o solicitud no compatible: prueba el siguiente
+        if (r.status === 429) { cuotaGratuitaAgotada = true; continue; } // prueba el otro modelo gratuito sin activar facturación
         break;
       }
       const d = await r.json();
@@ -164,7 +170,8 @@ module.exports = async function handler(req, res) {
       await registrar(ultima, /no tengo ese dato/i.test(reply) ? "sin_dato" : "ia");
       return res.status(200).json({ reply: String(reply).trim().slice(0, 1200) });
     }
-    await registrar(ultima, "error_ia");
+    await registrar(ultima, cuotaGratuitaAgotada ? "cuota_gratuita_agotada" : "error_ia");
+    if (cuotaGratuitaAgotada) return res.status(503).json({ error: "Los modelos gratuitos alcanzaron temporalmente su límite de uso. Andresito volverá a estar disponible cuando se restablezca la cuota. No se realizará ningún cobro." });
     return res.status(502).json(FALLO);
   } catch (e) {
     console.error("Error llamando a la IA:", e && e.name);

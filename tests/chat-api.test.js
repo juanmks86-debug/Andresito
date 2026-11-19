@@ -4,7 +4,7 @@ const assert = require("node:assert/strict");
 
 process.env.IA_KEY = "test-key";
 process.env.IA_URL = "https://ia-test.invalid/chat/completions";
-process.env.IA_MODELO = "modelo-prueba";
+process.env.IA_MODELO = "openai/gpt-oss-20b,openai/gpt-oss-120b";
 
 const handler = require("../api/chat.js");
 
@@ -73,7 +73,7 @@ test("envía a la IA las reglas institucionales y las FAQ, y devuelve su respues
     await handler(request("POST", { messages: [{ role: "user", content: "¿La carrera es presencial?" }] }), res);
     assert.equal(res.code, 200);
     assert.equal(res.body.reply, "La modalidad es presencial.");
-    assert.equal(payload.model, "modelo-prueba");
+    assert.equal(payload.model, "openai/gpt-oss-20b");
     const sistema = payload.messages.find(m => m.role === "system").content;
     assert.match(sistema, /No inventes ni completes por intuición/);
     assert.match(sistema, /PREGUNTAS FRECUENTES/);
@@ -90,5 +90,40 @@ test("devuelve error controlado si el proveedor falla", async () => {
     await handler(request("POST", { messages: [{ role: "user", content: "Consulta de prueba" }] }), res);
     assert.equal(res.code, 502);
     assert.match(res.body.error, /no está disponible/);
+  } finally { global.fetch = anterior; }
+});
+
+
+test("si el primer modelo gratuito devuelve 429, prueba el segundo", async () => {
+  const anterior = global.fetch;
+  const modelos = [];
+  global.fetch = async (url, options) => {
+    const model = JSON.parse(options.body).model;
+    modelos.push(model);
+    if (model === "openai/gpt-oss-20b") return { ok: false, status: 429, text: async () => "límite temporal" };
+    return { ok: true, json: async () => ({ choices: [{ message: { content: "Respuesta desde el modelo alternativo." } }] }) };
+  };
+  try {
+    const res = responseMock();
+    await handler(request("POST", { messages: [{ role: "user", content: "Consulta con fallback" }] }), res);
+    assert.equal(res.code, 200);
+    assert.equal(res.body.reply, "Respuesta desde el modelo alternativo.");
+    assert.deepEqual(modelos, ["openai/gpt-oss-20b", "openai/gpt-oss-120b"]);
+  } finally { global.fetch = anterior; }
+});
+
+test("si ambos modelos gratuitos devuelven 429, informa indisponibilidad sin cambiar de plan", async () => {
+  const anterior = global.fetch;
+  const modelos = [];
+  global.fetch = async (url, options) => {
+    modelos.push(JSON.parse(options.body).model);
+    return { ok: false, status: 429, text: async () => "límite temporal" };
+  };
+  try {
+    const res = responseMock();
+    await handler(request("POST", { messages: [{ role: "user", content: "Consulta sin cuota" }] }), res);
+    assert.equal(res.code, 503);
+    assert.match(res.body.error, /No se realizará ningún cobro/);
+    assert.deepEqual(modelos, ["openai/gpt-oss-20b", "openai/gpt-oss-120b"]);
   } finally { global.fetch = anterior; }
 });
