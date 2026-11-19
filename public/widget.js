@@ -110,15 +110,18 @@
       if (!img || img.src === url) return;
       img.style.opacity = "0.35";
       precargarAvatar(url, function () {
+        if (avatarMood !== estado) return;
         img.src = url;
         requestAnimationFrame(function () { img.style.opacity = "1"; });
       }, function () {
+        if (avatarMood !== estado) return;
         var alternativa = origen + "/avatars/normal/" + (estado === "speaking" ? "answering" : estado) + ".jpg";
         if (url !== alternativa) {
           precargarAvatar(alternativa, function () {
+            if (avatarMood !== estado) return;
             img.src = alternativa;
             requestAnimationFrame(function () { img.style.opacity = "1"; });
-          }, function () { img.style.opacity = "1"; });
+          }, function () { if (avatarMood === estado) img.style.opacity = "1"; });
         } else {
           img.style.opacity = "1";
         }
