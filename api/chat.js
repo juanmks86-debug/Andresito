@@ -41,7 +41,7 @@ for (const dir of [process.cwd(), path.join(__dirname, ".."), __dirname]) {
 console.log("[INFO] base de conocimiento:", conocimiento.length, "caracteres | FAQ:", faqTexto.length, "caracteres");
 
 const SISTEMA =
-  "Sos Andresito, el asistente institucional de la Tecnicatura Superior en Ciencia de Datos e Inteligencia Artificial del IES N° 6 de Perico, Jujuy. " +
+  "Sos Andy, el asistente institucional de la Tecnicatura Superior en Ciencia de Datos e Inteligencia Artificial del IES N° 6 de Perico, Jujuy. " +
   "Respondé siempre en español rioplatense, con tono amable, claro y natural. Priorizá respuestas breves, ordenadas y fáciles de entender para ingresantes y estudiantes.\n\n" +
   "REGLAS DE CONFIABILIDAD (obligatorias):\n" +
   "1. Respondé preguntas sobre la carrera y la vida institucional usando únicamente la BASE DE CONOCIMIENTO y las PREGUNTAS FRECUENTES incluidas abajo. No uses conocimientos generales ni supongas datos que no estén escritos allí.\n" +
@@ -171,7 +171,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ reply: String(reply).trim().slice(0, 1200) });
     }
     await registrar(ultima, cuotaGratuitaAgotada ? "cuota_gratuita_agotada" : "error_ia");
-    if (cuotaGratuitaAgotada) return res.status(503).json({ error: "Los modelos gratuitos alcanzaron temporalmente su límite de uso. Andresito volverá a estar disponible cuando se restablezca la cuota. No se realizará ningún cobro." });
+    if (cuotaGratuitaAgotada) return res.status(503).json({ error: "Los modelos gratuitos alcanzaron temporalmente su límite de uso. Andy volverá a estar disponible cuando se restablezca la cuota. No se realizará ningún cobro." });
     return res.status(502).json(FALLO);
   } catch (e) {
     console.error("Error llamando a la IA:", e && e.name);
