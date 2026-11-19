@@ -173,6 +173,6 @@ Las pruebas se ejecutan con Node.js, sin necesitar una clave real del proveedor 
 node --test tests/*.test.js
 ```
 
-- `tests/faq.test.js`: valida la estructura de la base FAQ, cada pregunta exacta, variantes de redacción y consultas ajenas al ámbito institucional.
+- `tests/faq.test.js`: extrae y ejecuta las funciones reales del buscador desde `public/widget.js` (sin duplicar su implementación) y valida la estructura de la FAQ, preguntas exactas, variantes y consultas ajenas al ámbito institucional.
 - `tests/chat-api.test.js`: verifica el contrato del endpoint, validaciones de solicitudes, inclusión de las reglas y FAQ en el contexto de IA, respuesta correcta y manejo de errores. El proveedor se simula; no se realizan llamadas reales ni se utiliza una clave válida.
 - `.github/workflows/faq-tests.yml`: ejecuta ambas suites automáticamente en GitHub Actions ante cambios relevantes y en las solicitudes de integración.
