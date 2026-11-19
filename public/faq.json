@@ -238,5 +238,10 @@
     "q": "¿El instituto tiene acceso a Internet para los estudiantes?",
     "kw": "acceso internet estudiantes estudiante conexión conectividad red starlink",
     "a": "Sí. Los estudiantes pueden utilizar la conexión a Internet del instituto, que funciona mediante una red Starlink."
+  },
+  {
+    "q": "¿Puedo imprimir o sacar fotocopias en el instituto?",
+    "kw": "imprimir imprimir documentos impresión impresiones sacar fotocopias fotocopia fotocopias copias",
+    "a": "Sí. El instituto cuenta con servicio de fotocopiadora."
   }
 ]
