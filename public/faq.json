@@ -243,5 +243,11 @@
     "q": "¿Puedo imprimir o sacar fotocopias en el instituto?",
     "kw": "imprimir imprimir documentos impresión impresiones sacar fotocopias fotocopia fotocopias copias",
     "a": "Sí. El instituto cuenta con servicio de fotocopiadora."
+  },
+  {
+    "q": "¿El instituto cuenta con baños para los estudiantes?",
+    "kw": "baño baños sanitario sanitarios estudiantes",
+    "a": "No tengo ese dato. Consultalo en la secretaría del IES N° 6 de Perico.",
+    "sd": 1
   }
 ]
