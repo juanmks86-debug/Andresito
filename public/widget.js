@@ -57,6 +57,17 @@
     return mejor;
   }
   var AYUDA = " Preguntame por materias, duración, horarios, requisitos de ingreso o salida laboral.";
+  function aclaracionLocal(t) {
+    var n = norm(t).replace(/\s+/g, " ").trim();
+    var preguntaPorFecha = /\b(cuando|que dia|en que fecha|fecha)\b/.test(n);
+    var temaClases = /\b(clases|cursada|ciclo lectivo)\b/.test(n);
+    var incluyeAnio = /\b(20\d{2})\b/.test(n);
+    if (preguntaPorFecha && temaClases && !incluyeAnio) {
+      return "¿Te referís al ciclo lectivo 2026 o 2027?";
+    }
+    return null;
+  }
+
   function charla(t) {
     var n = norm(t).replace(/\s+/g, " ").trim();
     if (!n) return null;
@@ -456,7 +467,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
     programarExpresion("thinking");
     input.value = ""; quitarChips(); agregar(t, "u"); sonar("enviar");
     try {
-      var sal = charla(t);
+      var sal = charla(t) || aclaracionLocal(t);
       if (sal) { var e0 = agregar(sal, "a"); programarExpresion("speaking", 2200); sonar("recibir"); hablar(sal); chips(sugerencias()); return; }
       var hit = buscar(t);
       historial.push({ role: "user", content: t });
