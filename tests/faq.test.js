@@ -8,7 +8,7 @@ const assert = require("node:assert/strict");
 const faq = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "public", "faq.json"), "utf8"));
 
 function norm(s) {
-  return s.toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ");
+  return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9 ]/g, " ");
 }
 const VACIAS = " que hay entre como para cual cuale por una uno los las del con mas esta esto ano carre cuant ";
 function stem(w) { return w.slice(0, 5); }
@@ -33,7 +33,7 @@ function cerca(a, b) {
   return lev(a, b) <= (Math.max(a.length, b.length) >= 9 ? 2 : 1);
 }
 function utiles(s) {
-  return norm(s).split(/\\s+/).filter(function (w) {
+  return norm(s).split(/\s+/).filter(function (w) {
     return w.length > 2 && VACIAS.indexOf(" " + stem(w) + " ") < 0 && !cerca(w, "carrera");
   });
 }
@@ -41,9 +41,9 @@ const preparadas = faq.filter(f => f && typeof f.q === "string" && typeof f.a ==
   .map(f => ({ ...f, pal: utiles(f.kw || f.q) }));
 
 function buscar(t) {
-  const nt = norm(t).replace(/\\s+/g, " ").trim();
+  const nt = norm(t).replace(/\s+/g, " ").trim();
   for (const f of preparadas) {
-    if (norm(f.q).replace(/\\s+/g, " ").trim() === nt) return f;
+    if (norm(f.q).replace(/\s+/g, " ").trim() === nt) return f;
   }
   const qs = utiles(t);
   let mejor = null, max = 0;
