@@ -16,7 +16,7 @@
   if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaPruebaAvatar || "")) fechaPruebaAvatar = null;
   var api = script.dataset.api || origen + "/api/chat";
   var faqUrl = script.dataset.faq || origen + "/faq.json";
-  var historial = [], vozActiva = false, preguntadas = {}, rec = null, ocupado = false, FAQ = [];
+  var historial = [], vozActiva = false, preguntadas = {}, rec = null, ocupado = false, FAQ = [], esperaConsultaTimer = null;
 
   function leer(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function escribir(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
@@ -251,7 +251,7 @@
 .f input::placeholder{color:#7895ad}
 .f input:focus{border-color:#32c8ed;outline:2px solid #32c8ed33;outline-offset:0}
 .f button{width:42px;height:42px;flex:none;background:linear-gradient(145deg,#00bddd,#3569e8);box-shadow:0 5px 16px #087eb455;color:#fff}
-.f button:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.f button:hover{filter:brightness(1.12);transform:translateY(-1px)}.f button:disabled{opacity:.55;cursor:wait;filter:saturate(.55);transform:none}
 .f button.on{background:#d94a63}
 button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offset:3px}
 @media (min-width:521px){.p{backdrop-filter:blur(18px)}}
@@ -277,7 +277,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
     '<button id="mic" title="Hablar" aria-label="Preguntar con la voz" aria-pressed="false">🎤</button><button id="s" aria-label="Enviar pregunta">➤</button></div></div>';
 
   var $ = function (s) { return root.querySelector(s); };
-  var panel = $(".p"), msgs = $(".m"), input = $("input"), st = $(".st"), bub = $(".b"), tip = $(".tip");
+  var panel = $(".p"), msgs = $(".m"), input = $("input"), st = $(".st"), bub = $(".b"), tip = $(".tip"), botonEnviar = $("#s");
   $("#nom").textContent = nombre;
   $("#tt").textContent = "👋 ¡Hola! Soy " + nombre + ". ¿Te ayudo con la carrera?";
   panel.setAttribute("aria-label", "Chat con " + nombre);
@@ -442,10 +442,17 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
   }
   function pausa(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
+  function bloquearEnvio(bloqueado) {
+    botonEnviar.disabled = bloqueado;
+    botonEnviar.setAttribute("aria-busy", bloqueado ? "true" : "false");
+    botonEnviar.title = bloqueado ? "Consulta en curso…" : "Enviar pregunta";
+  }
+
   async function enviar() {
     var t = input.value.trim();
     if (!t || ocupado) return;
     ocupado = true;
+    bloquearEnvio(true);
     programarExpresion("thinking");
     input.value = ""; quitarChips(); agregar(t, "u"); sonar("enviar");
     try {
@@ -463,15 +470,24 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
         chips(sugerencias());
         return;
       }
+      esperaConsultaTimer = setTimeout(function () {
+        if (el && el.classList.contains("t")) {
+          el.textContent = "Sigo buscando la mejor respuesta…";
+          el.setAttribute("aria-label", "Sigo buscando la mejor respuesta");
+          msgs.scrollTop = msgs.scrollHeight;
+        }
+      }, 6500);
       try {
         estadoAsistente("busy", "Consultando IA…");
         clearTimeout(avatarMoodTimer);
         cambiarExpresionAvatar("processing");
         var r = await fetch(api, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: historial.slice(-6) }) });
         var d = await r.json();
+        clearTimeout(esperaConsultaTimer); esperaConsultaTimer = null;
         if (!d.reply) { var err = new Error(d.error || "El servicio no pudo generar una respuesta."); err.status = r.status; err.detalle = d.error || ""; throw err; }
         responder(el, d.reply, true); estadoAsistente("ok", "Disponible");
       } catch (e) {
+        clearTimeout(esperaConsultaTimer); esperaConsultaTimer = null;
         historial.pop();
         var mensaje = "No pude completar la consulta. Probá nuevamente en unos minutos.";
         if (e && e.status === 429) mensaje = e.detalle || "Alcanzaste el límite de consultas por ahora. Intentá más tarde.";
@@ -483,7 +499,11 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
         estadoAsistente("warn", "Servicio limitado");
       }
       chips(sugerencias());
-    } finally { ocupado = false; if (avatarMood !== "error" && avatarMood !== "speaking") programarExpresion("idle", 0); }
+    } finally {
+      clearTimeout(esperaConsultaTimer); esperaConsultaTimer = null;
+      ocupado = false; bloquearEnvio(false);
+      if (avatarMood !== "error" && avatarMood !== "speaking") programarExpresion("idle", 0);
+    }
   }
 
   function hablar(txt) {
