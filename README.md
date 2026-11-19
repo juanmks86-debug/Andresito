@@ -1,6 +1,6 @@
-# Andresito — Asistente académico del IES N.º 6
+# Andy — Asistente académico del IES N.º 6
 
-Andresito es un chatbot web para acompañar a estudiantes y aspirantes de la **Tecnicatura Superior en Ciencia de Datos e Inteligencia Artificial** del Instituto de Educación Superior N.º 6, sede Perico (Jujuy).
+Andy es un chatbot web para acompañar a estudiantes y aspirantes de la **Tecnicatura Superior en Ciencia de Datos e Inteligencia Artificial** del Instituto de Educación Superior N.º 6, sede Perico (Jujuy).
 
 El asistente combina respuestas rápidas a partir de preguntas frecuentes con una consulta a un modelo de IA cuando la FAQ no alcanza. La IA utiliza la información institucional incluida en este repositorio y debe reconocer cuando no cuenta con un dato, en lugar de inventarlo.
 
@@ -60,7 +60,7 @@ También se conserva la compatibilidad con el parámetro en la URL del script de
 
 ## Base de conocimientos
 
-Andresito utiliza dos fuentes complementarias:
+Andy utiliza dos fuentes complementarias:
 
 | Archivo | Función |
 |---|---|
@@ -92,7 +92,7 @@ Usá comillas dobles en JSON, separá las entradas con comas y no agregues una c
 
 Cuando se actualicen datos importantes —por ejemplo fechas, costos, autoridades o requisitos— revisá también `conocimiento_carrera.md` para mantener coherentes las dos fuentes. No publiques datos institucionales sin confirmarlos.
 
-### Consultas que Andresito no pudo resolver
+### Consultas que Andy no pudo resolver
 
 Las consultas sin respuesta útil pueden registrarse de forma anonimizada para detectar qué información falta. El endpoint administrativo es:
 
@@ -113,7 +113,7 @@ El acceso requiere la variable `ADMIN_KEY`. Si Upstash está configurado, los re
 | `public/index.html` | Página de prueba del widget. |
 | `vercel.json` | Configuración de despliegue y cabeceras. |
 
-## Cómo integrar Andresito en otra página
+## Cómo integrar Andy en otra página
 
 Pegá este código antes de cerrar la etiqueta `</body>`:
 
@@ -126,7 +126,7 @@ Atributos opcionales:
 | Atributo | Función | Ejemplo |
 |---|---|---|
 | `data-color` | Color principal del widget. | `#0066ff` |
-| `data-nombre` | Nombre mostrado por el asistente. | `Andresito` |
+| `data-nombre` | Nombre mostrado por el asistente. | `Andy` |
 | `data-posicion` | Posición inicial de la burbuja. | `izquierda` |
 | `data-icono` | Imagen propia para la burbuja. | URL de una imagen |
 | `data-api` | URL alternativa del endpoint de chat. | `https://dominio/api/chat` |
@@ -163,11 +163,11 @@ El orden predeterminado es el indicado arriba. Si se configura `IA_MODELO`, solo
 Comportamiento ante límites del proveedor:
 
 1. Si el primer modelo devuelve HTTP `429` (límite temporal o cuota), el backend intenta el siguiente modelo permitido.
-2. Si los modelos gratuitos disponibles devuelven `429`, Andresito responde HTTP `503` e informa que la cuota gratuita alcanzó temporalmente su límite.
+2. Si los modelos gratuitos disponibles devuelven `429`, Andy responde HTTP `503` e informa que la cuota gratuita alcanzó temporalmente su límite.
 3. En ese caso no se cambia a un modelo pago ni se activa una alternativa de facturación por uso. El servicio queda temporalmente indisponible hasta que el proveedor restablezca la cuota.
 4. Los errores `400` o `404` permiten probar el siguiente modelo de la lista; otros errores generan una respuesta controlada.
 
-**Importante:** la lista es una restricción aplicada por el código de Andresito, no una garantía de gratuidad permanente del proveedor. La disponibilidad y las condiciones del plan gratuito pueden cambiar. Antes de actualizar la lista o el proveedor, verificá sus condiciones vigentes. No habilites facturación, recargas automáticas ni modelos pagos para resolver un límite de uso. La configuración de facturación y las condiciones de la cuenta del proveedor son externas a este repositorio.
+**Importante:** la lista es una restricción aplicada por el código de Andy, no una garantía de gratuidad permanente del proveedor. La disponibilidad y las condiciones del plan gratuito pueden cambiar. Antes de actualizar la lista o el proveedor, verificá sus condiciones vigentes. No habilites facturación, recargas automáticas ni modelos pagos para resolver un límite de uso. La configuración de facturación y las condiciones de la cuenta del proveedor son externas a este repositorio.
 
 4. Después de modificar variables de entorno, generá un nuevo despliegue.
 5. Revisá los registros de Vercel para confirmar que la base de conocimiento y las FAQ se cargaron correctamente.
