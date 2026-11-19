@@ -62,6 +62,17 @@
 
   // ---- Interfaz ----
   var ROBOT = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="4"/><path d="M12 8V5"/><circle cx="12" cy="4" r="1" fill="#fff"/><circle cx="9" cy="13" r="1.2" fill="#fff" stroke="none"/><circle cx="15" cy="13" r="1.2" fill="#fff" stroke="none"/><path d="M9.5 16.2c1.5 1 3.5 1 5 0"/><path d="M2 12v3M22 12v3"/></svg>';
+  // Avatar estacional según la fecha local del dispositivo; límites inclusivos.
+  function avatarEstacional() {
+    var ahora = new Date();
+    var fecha = ahora.getFullYear() * 10000 + (ahora.getMonth() + 1) * 100 + ahora.getDate();
+    var archivo = "Plantilla_Normal.jpeg";
+    if (fecha >= 20261118 && fecha <= 20261224) archivo = "Plantilla_Graduacion.jpeg";
+    else if (fecha >= 20261225 && fecha <= 20270114) archivo = "Plantilla_Navidad.jpeg";
+    else if (fecha >= 20270115 && fecha <= 20270326) archivo = "Plantilla_Verano.jpeg";
+    return origen + "/" + archivo;
+  }
+  var avatarUrl = avatarEstacional();
   var host = document.createElement("div");
   document.body.appendChild(host);
   var root = host.attachShadow({ mode: "open" });
@@ -101,7 +112,7 @@
 .tip button{color:#a9c4dc}
 .p{background:#0a1728;color:#eaf4ff;border:1px solid #24415e;border-radius:24px;box-shadow:0 24px 80px #000a,0 0 0 1px #50dfff12;overflow:hidden}
 .h{background:linear-gradient(125deg,#123b5a 0%,#10243d 52%,#0b192c 100%);padding:15px 15px;border-bottom:1px solid #244763}
-.av{width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044}
+.av{width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044};overflow:hidden}.av img{width:100%;height:100%;display:block;object-fit:cover;border-radius:50%
 .av svg{width:27px;height:27px}
 .ti b{font-size:16px;letter-spacing:.2px;color:#f2f9ff}
 .ti small{font-size:10px;letter-spacing:.35px;color:#a7c3d9}
@@ -167,7 +178,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
 </style>` +
     '<button class="b n" aria-expanded="false">' + ROBOT + '</button>' +
     '<div class="tip" role="status"><span id="tt"></span><button id="tx" aria-label="Cerrar sugerencia">✕</button></div>' +
-    '<div class="p" role="dialog"><div class="h"><div class="av">' + ROBOT + '</div><div class="ti"><b id="nom"></b><small class="presence" id="presencia"><i></i><span id="textoEstado">Conectando…</span></small></div><span class="ac">' +
+    '<div class="p" role="dialog"><div class="h"><div class="av"><img src="' + avatarUrl + '" alt="Avatar de Andresito"></div><div class="ti"><b id="nom"></b><small class="presence" id="presencia"><i></i><span id="textoEstado">Conectando…</span></small></div><span class="ac">' +
     '<button id="snd" aria-label="Sonidos del chat">🔔</button>' +
     '<button id="v" title="Leer respuestas en voz alta" aria-label="Leer respuestas en voz alta" aria-pressed="false">🗣</button>' +
     '<button id="r" title="Nueva conversación" aria-label="Nueva conversación">↺</button>' +
