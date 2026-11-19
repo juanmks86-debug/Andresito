@@ -18,6 +18,6 @@ En cada carpeta, los archivos deben llamarse exactamente:
 - error.jpg — error
 - offline.jpg — sin conexión
 
-Preferentemente PNG con fondo transparente. Mantené el mismo tamaño y encuadre en todos los recortes de una temporada.
+Las imágenes actuales están en formato JPG. Mantené el mismo tamaño y encuadre en todos los recortes de una temporada. Mantené el mismo tamaño y encuadre en todos los recortes de una temporada.
 
 No cambies los nombres: el widget los utilizará para seleccionar la expresión según la temporada y el estado de Andresito.
