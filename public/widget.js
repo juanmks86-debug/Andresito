@@ -1,4 +1,4 @@
-/* Andresito - chatbot de la carrera. Se integra con:
+/* Andy - chatbot de la carrera. Se integra con:
    <script src="https://TU-DOMINIO/widget.js" data-color="#0066ff" defer></script>
    Atributos opcionales: data-nombre, data-posicion="izquierda", data-icono, data-api, data-faq. Ver README.md */
 (function () {
@@ -6,7 +6,7 @@
   var color = script.dataset.color || "#0066ff";
   var izq = script.dataset.posicion === "izquierda";
   var icono = script.dataset.icono || ""; // URL opcional de una imagen para el ícono de la burbuja
-  var nombre = script.dataset.nombre || "Andresito";
+  var nombre = script.dataset.nombre || "Andy";
   var scriptUrl = new URL(script.src);
   var origen = scriptUrl.origin;
   // Modo de prueba visual: acepta ?avatarTest=AAAA-MM-DD en la URL del widget
@@ -214,7 +214,7 @@
     ".f button{border:0;border-radius:50%;width:40px;height:40px;background:" + color + ";color:#fff;cursor:pointer;font-size:16px}.f button.on{background:#d93025;animation:y 1s infinite}@keyframes y{50%{opacity:.6}}" +
     "@media (prefers-color-scheme:dark){.p,.tip{background:#1c1d22;color:#eceef2}.m{background:#15161a}.a{background:#25272e;border-color:#353842;color:#eceef2}.f,.st{background:#1c1d22;border-color:#353842;color:#c9ccd3}.f input{background:#25272e;color:#eceef2;border-color:#3b3e48}.c button{background:#1c1d22;color:#9ec1ff;border-color:#9ec1ff}.nt{color:#9aa0ab}}" +
     `@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-/* ---- Andresito / rediseño tecnológico oscuro ---- */
+/* ---- Andy / rediseño tecnológico oscuro ---- */
 :host{color-scheme:dark}
 .b{width:64px;height:64px;border:1px solid #75e8ff;background:linear-gradient(145deg,#087fae,#315ee8);box-shadow:0 10px 34px #00bfe855,0 3px 12px #0008;border-radius:22px}
 .b:hover{transform:translateY(-2px) scale(1.035);box-shadow:0 14px 38px #00bfe866,0 4px 14px #0009}
@@ -291,7 +291,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
 </style>` +
     '<button class="b n" aria-expanded="false">' + ROBOT + '</button>' +
     '<div class="tip" role="status"><span id="tt"></span><button id="tx" aria-label="Cerrar sugerencia">✕</button></div>' +
-    '<div class="p" role="dialog"><div class="h"><div class="av"><img src="' + avatarUrl + '" alt="Avatar de Andresito"></div><div class="ti"><b id="nom"></b><small class="presence" id="presencia"><i></i><span id="textoEstado">Conectando…</span></small></div><span class="ac">' +
+    '<div class="p" role="dialog"><div class="h"><div class="av"><img src="' + avatarUrl + '" alt="Avatar de Andy"></div><div class="ti"><b id="nom"></b><small class="presence" id="presencia"><i></i><span id="textoEstado">Conectando…</span></small></div><span class="ac">' +
     '<button id="snd" aria-label="Sonidos del chat">🔔</button>' +
     '<button id="v" title="Leer respuestas en voz alta" aria-label="Leer respuestas en voz alta" aria-pressed="false">🗣</button>' +
     '<button id="r" title="Nueva conversación" aria-label="Nueva conversación">↺</button>' +
@@ -410,7 +410,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
     chips(lista); msgs.scrollTop = msgs.scrollHeight;
   }
   function bienvenida() {
-    var card = document.createElement("section"); card.className = "welcome"; card.setAttribute("aria-label", "Bienvenida de Andresito");
+    var card = document.createElement("section"); card.className = "welcome"; card.setAttribute("aria-label", "Bienvenida de Andy");
     var eyebrow = document.createElement("div"); eyebrow.className = "eyebrow"; eyebrow.textContent = "Asistente académico · IES N.º 6";
     var titulo = document.createElement("h3"); titulo.textContent = "¡Hola! Soy " + nombre + ".";
     var texto = document.createElement("p"); texto.textContent = "Estoy para ayudarte con la Tecnicatura en Ciencia de Datos e Inteligencia Artificial. Elegí un tema o escribime tu consulta.";
