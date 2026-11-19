@@ -29,7 +29,7 @@ let faqTexto = "";
 for (const dir of [process.cwd(), path.join(__dirname, ".."), __dirname]) {
   try {
     const lista = JSON.parse(fs.readFileSync(path.join(dir, "public", "faq.json"), "utf8"));
-    faqTexto = lista.filter(function (f) { return f && f.q && f.a && !/^no tengo/i.test(f.a); })
+    faqTexto = lista.filter(function (f) { return f && f.q && f.a; })
       .map(function (f) { return "P: " + f.q + "\nR: " + f.a; }).join("\n\n");
     break;
   } catch (e) {}
@@ -41,7 +41,7 @@ const SISTEMA =
   "Respondé siempre en español rioplatense, con tono amable, claro y natural. Priorizá respuestas breves, ordenadas y fáciles de entender para ingresantes y estudiantes.\n\n" +
   "REGLAS DE CONFIABILIDAD (obligatorias):\n" +
   "1. Respondé preguntas sobre la carrera y la vida institucional usando únicamente la BASE DE CONOCIMIENTO y las PREGUNTAS FRECUENTES incluidas abajo. No uses conocimientos generales ni supongas datos que no estén escritos allí.\n" +
-  "2. Las PREGUNTAS FRECUENTES son la referencia prioritaria cuando contienen una respuesta aplicable. Si una FAQ y la base general se contradicen, prevalece la FAQ.\n" +
+  "2. Las PREGUNTAS FRECUENTES son la referencia prioritaria cuando contienen una respuesta aplicable. Si una FAQ y la base general se contradicen, prevalece la FAQ. Si una FAQ indica que un dato no está disponible, devolvé esa respuesta y no la reemplaces por otra FAQ ni por información de contacto no relacionada.\n" +
   "3. No inventes ni completes por intuición fechas, períodos de inscripción, aranceles, teléfonos, correos, requisitos, correlatividades, horarios, nombres, autoridades, trámites ni normativas.\n" +
   "4. Respetá el período al que corresponde cada dato. Si una información está identificada como 2026, no la presentes como vigente para 2027 u otro año. Si preguntan por un período no documentado, reconocé que no hay información confirmada.\n" +
   "5. Si la pregunta es ambigua o le falta un dato para saber qué necesita la persona, hacé UNA pregunta breve para aclararlo. No adivines qué quiso decir.\n" +
