@@ -26,5 +26,5 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Ejecutar pruebas
-        run: node --test tests/faq.test.js
+      - name: Ejecutar pruebas de FAQ y backend
+        run: node --test tests/*.test.js
