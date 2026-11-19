@@ -13,7 +13,7 @@
 
 ## Costos, Ingreso y Perfil Previo
 - **Costo y arancelamiento:** Es de gestión estatal, pero cuenta con un mínimo para abonar por única vez.
-- **Condiciones de ingreso:** Poseer título de nivel medio o polimodal. Los mayores de 25 años que no hayan finalizado el nivel medio o polimodal pueden acogerse a la Resolución 114-SE-02 de la Provincia de Jujuy. Se presentan documentos personales y académicos según la normativa vigente.
+- **Condiciones de ingreso:** Poseer título de nivel medio o polimodal. Los mayores de 25 años que no hayan finalizado el nivel medio o polimodal pueden acogerse a la Resolución 114-SE-02 de la Provincia de Jujuy. La base disponible no detalla cuáles son los documentos personales y académicos que deben presentarse; consultar el listado actualizado en Secretaría del IES N° 6.
 - **Evaluación de ingreso:** En el año 2026 para el ingreso se tomó un examen parcial.
 - **Requisito de perfil previo:** No se requieren conocimientos previos, pero es aconsejable tener un perfil autodidacta para prepararse de manera óptima para el ingreso.
 
