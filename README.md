@@ -163,3 +163,16 @@ Para permitir el uso desde otro dominio, agregá su origen a `ALLOWED_ORIGINS` e
 - Si la IA deja de responder, revisá la vigencia de `IA_KEY`, el modelo configurado y los registros de Vercel.
 - Mantené actualizadas las FAQ y la base de conocimiento con información confirmada por el instituto.
 - Protegé las cuentas de GitHub y Vercel con verificación en dos pasos.
+
+
+## Pruebas automáticas
+
+Las pruebas se ejecutan con Node.js, sin necesitar una clave real del proveedor de IA:
+
+```bash
+node --test tests/*.test.js
+```
+
+- `tests/faq.test.js`: valida la estructura de la base FAQ, cada pregunta exacta, variantes de redacción y consultas ajenas al ámbito institucional.
+- `tests/chat-api.test.js`: verifica el contrato del endpoint, validaciones de solicitudes, inclusión de las reglas y FAQ en el contexto de IA, respuesta correcta y manejo de errores. El proveedor se simula; no se realizan llamadas reales ni se utiliza una clave válida.
+- `.github/workflows/faq-tests.yml`: ejecuta ambas suites automáticamente en GitHub Actions ante cambios relevantes y en las solicitudes de integración.
