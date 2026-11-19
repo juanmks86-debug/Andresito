@@ -84,7 +84,7 @@
   function cambiarExpresionAvatar(estado) {
     avatarMood = estado;
     var url = urlExpresionAvatar(estado);
-    [root.querySelector(".av img"), bub && bub.querySelector("img")].forEach(function (img) {
+    [root.querySelector(".av img"), !icono && bub && bub.querySelector("img")].forEach(function (img) {
       if (img && img.src !== url) img.src = url;
     });
   }
