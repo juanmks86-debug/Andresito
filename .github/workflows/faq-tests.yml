@@ -1,0 +1,30 @@
+name: Pruebas automáticas de FAQ
+
+on:
+  push:
+    branches: [main, quality/respuestas-fundamentadas]
+    paths:
+      - "public/faq.json"
+      - "public/widget.js"
+      - "tests/**"
+      - ".github/workflows/faq-tests.yml"
+  pull_request:
+    paths:
+      - "public/faq.json"
+      - "public/widget.js"
+      - "tests/**"
+      - ".github/workflows/faq-tests.yml"
+
+jobs:
+  faq-tests:
+    name: Validar preguntas frecuentes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Ejecutar pruebas
+        run: node --test tests/faq.test.js
