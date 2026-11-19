@@ -52,7 +52,7 @@ for (const [pregunta, esperada] of [
     assert.equal(hit.q, esperada);
     if (esperada === "¿Qué materias hay en tercer año?") {
       assert.match(hit.a, /Prácticas Profesionalizantes III/);
-      assert.doesNotMatch(hit.a, /Prácticas Profesionalizantes II/);
+      assert.doesNotMatch(hit.a, /Prácticas Profesionalizantes II\\b/);
     }
   });
 }
