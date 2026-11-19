@@ -56,6 +56,19 @@
     if (max === 0 || (max === 1 && qs.length > 1) || (max >= 2 && max / qs.length < 0.5)) return null;
     return mejor;
   }
+  // Respuesta determinística para consultas del plan de estudios por año.
+  function buscarMateriasPorAnio(t) {
+    var n = norm(t).replace(/\s+/g, " ").trim();
+    var consultaMaterias = /\b(materias|asignaturas|plan de estudios|que se cursa|que cursan)\b/.test(n);
+    if (!consultaMaterias) return null;
+    var anio = /\b(primer|primero|1ro|1er)\b/.test(n) ? "primer" :
+      /\b(segundo|2do)\b/.test(n) ? "segundo" :
+      /\b(tercer|tercero|3ro|3er|ultimo)\b/.test(n) ? "tercer" : null;
+    if (!anio) return null;
+    var pregunta = anio === "primer" ? "¿Qué materias hay en primer año?" :
+      anio === "segundo" ? "¿Qué materias hay en segundo año?" : "¿Qué materias hay en tercer año?";
+    return FAQ.find(function (f) { return f.q === pregunta; }) || null;
+  }
   var AYUDA = " Preguntame por materias, duración, horarios, requisitos de ingreso o salida laboral.";
   function aclaracionLocal(t) {
     var n = norm(t).replace(/\s+/g, " ").trim();
@@ -469,7 +482,7 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
     try {
       var sal = charla(t) || aclaracionLocal(t);
       if (sal) { var e0 = agregar(sal, "a"); programarExpresion("speaking", 2200); sonar("recibir"); hablar(sal); chips(sugerencias()); return; }
-      var hit = buscar(t);
+      var hit = buscarMateriasPorAnio(t) || buscar(t);
       historial.push({ role: "user", content: t });
       var el = escribiendo();
       if (hit) {
