@@ -213,5 +213,10 @@
     "q": "¿Quién es el coordinador de la carrera de Ciencia de Datos e Inteligencia Artificial?",
     "kw": "coordinador coordinadora",
     "a": "El coordinador de la carrera es Torres Federico."
+  },
+  {
+    "q": "¿Qué servicios ofrece la biblioteca del instituto?",
+    "kw": "servicios ofrece biblioteca instituto biblioteca institucional netbooks préstamo libros",
+    "a": "El instituto cuenta con una biblioteca institucional. Además, se pueden solicitar netbooks para usar dentro de las horas de clase. Para consultar otros servicios o las condiciones de préstamo, acercate al IES N° 6 de Perico."
   }
 ]
