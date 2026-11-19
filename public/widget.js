@@ -112,7 +112,7 @@
 .tip button{color:#a9c4dc}
 .p{background:#0a1728;color:#eaf4ff;border:1px solid #24415e;border-radius:24px;box-shadow:0 24px 80px #000a,0 0 0 1px #50dfff12;overflow:hidden}
 .h{background:linear-gradient(125deg,#123b5a 0%,#10243d 52%,#0b192c 100%);padding:15px 15px;border-bottom:1px solid #244763}
-.av{width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044};overflow:hidden}.av img{width:100%;height:100%;display:block;object-fit:cover;border-radius:50%
+.av{width:44px;height:44px;border:1px solid #4bc9e8;background:radial-gradient(circle at 35% 25%,#2b8bad,#12334f 72%);box-shadow:0 0 22px #00c8f044;overflow:hidden}.av img{width:100%;height:100%;display:block;object-fit:cover;border-radius:50%}
 .av svg{width:27px;height:27px}
 .ti b{font-size:16px;letter-spacing:.2px;color:#f2f9ff}
 .ti small{font-size:10px;letter-spacing:.35px;color:#a7c3d9}
@@ -397,7 +397,8 @@ button:focus-visible,input:focus-visible{outline:2px solid #54dcff;outline-offse
 
   // ---- Burbuja arrastrable (se pega al borde más cercano y recuerda su posición) ----
   var TAM = 64, M = 20, drag = null, arrastro = false;
-  if (icono) { var im = document.createElement("img"); im.alt = ""; im.src = icono; bub.textContent = ""; bub.appendChild(im); }
+  var iconoFinal = icono || avatarUrl;
+  if (iconoFinal) { var im = document.createElement("img"); im.alt = ""; im.src = iconoFinal; bub.textContent = ""; bub.appendChild(im); }
   function limitar(n, a, b) { return Math.max(a, Math.min(b, n)); }
   function movil() { return window.innerWidth <= 520; }
   var pos = { lado: izq ? "l" : "r", y: 1 };
